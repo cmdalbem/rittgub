@@ -36,11 +36,11 @@ int amain() {
     printf("0,0 %d\n",canDelegate(0,0));
     atribs[0][0] = 0;
     atribs[0][N_TASKS]++;
-    printf("2,0 %d\n",canDelegate(2,0));
-    printf("1,0 %d\n",canDelegate(1,0));
-    atribs[0][1] = 1;
-    atribs[0][N_TASKS]++;
-    printf("2,0 %d\n",canDelegate(2,0));
+    printf("2,1 %d\n",canDelegate(2,1));
+    printf("1,1 %d\n",canDelegate(1,1));
+    atribs[1][0] = 1;
+    atribs[1][N_TASKS]++;
+    printf("2,1 %d\n",canDelegate(2,1));
     printf("7,0 %d\n",canDelegate(7,0));
 
 }
@@ -94,13 +94,17 @@ int canDelegate(int task, int machine) {
 
         if (graph[i][task]) {
             can = 0;
-            //printf("%d Depends on %d\n",task, i);
-            for (int j=0; j < atribs[machine][MAX_TASKS-1]; j++) {
-                //printf("can ? atribs[%d][%d] == %d\n",machine,j,i);
-                //printf("%d == %d\n",atribs[machine][j],i);
-                can = can || atribs[machine][j] == i;
-            }
+//            printf("%d Depends on %d\n",task, i);
 
+            //search in each machine that comes before it
+            for (int j = 0; j <= machine; j++) {
+                 for (int k=0; k < atribs[j][MAX_TASKS-1]; k++) {
+//                    printf("In machine %d\n",j);
+//                    printf("%d == %d\n",atribs[j][k],i);
+                    can = can || atribs[j][k] == i;
+                  }
+
+            }
         }
 
      }
