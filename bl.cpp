@@ -92,11 +92,10 @@ void randomGreedy() {
 
 void localSearch() {
 	int worstIndex, localCicle;
-	bool improved, severalWorst;
+	bool improved;
 
 	do {
 		improved = false;
-		severalWorst = false;
 		localCicle = 0;
 
 		// calculates the longest cicle between all machines
@@ -104,17 +103,10 @@ void localSearch() {
 			if(atribs[i][MACHINE_CICLE] > localCicle) {
 				localCicle = atribs[i][MACHINE_CICLE];
 				worstIndex = i;
-				severalWorst = false;
 			}
-			else if(atribs[i][MACHINE_CICLE] == localCicle)
-				severalWorst = true;
 		}
 
 		currentSolution = localCicle;
-
-		// if more then 1 machine shares the longest cicle, doesn't have better neighbor
-		if(severalWorst)
-			return;
 
 		for(int i = 0; i < m; i++) {
 			if(i != worstIndex) {
