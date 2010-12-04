@@ -32,13 +32,17 @@ int canDelegate(int task,int machine);
 
 int amain() {
 
-    printf("%d\n",canDelegate(1,0));
-    printf("%d\n",canDelegate(0,0));
-    atribs[0][0];
-    atribs[0][N_TASKS] = 1;
-    printf("%d\n",canDelegate(1,0));
-    printf("%d\n",canDelegate(7,0));
-    exit(1);
+    printf("1,0 %d\n",canDelegate(1,0));
+    printf("0,0 %d\n",canDelegate(0,0));
+    atribs[0][0] = 0;
+    atribs[0][N_TASKS]++;
+    printf("2,0 %d\n",canDelegate(2,0));
+    printf("1,0 %d\n",canDelegate(1,0));
+    atribs[0][1] = 1;
+    atribs[0][N_TASKS]++;
+    printf("2,0 %d\n",canDelegate(2,0));
+    printf("7,0 %d\n",canDelegate(7,0));
+
 }
 
 
@@ -60,6 +64,7 @@ int main(int argc, char**argv) {
 	printInput();
 
     amain();
+    exit(1);
 
 	for(int i = 0; i < MAX_ITERATIONS; i++) {
 		//randomGreedy();
@@ -83,12 +88,21 @@ int main(int argc, char**argv) {
 
 int canDelegate(int task, int machine) {
 
-    int can = 0;
+    int can = 1;
 
     for (int i=0; i < n; i++) {
-            for (int j=0; j < LAST_TASK(machine); j++) {
-                can = can || atribs[machine][j] == graph[task][i];
+
+        if (graph[i][task]) {
+            can = 0;
+            //printf("%d Depends on %d\n",task, i);
+            for (int j=0; j < atribs[machine][MAX_TASKS-1]; j++) {
+                //printf("can ? atribs[%d][%d] == %d\n",machine,j,i);
+                //printf("%d == %d\n",atribs[machine][j],i);
+                can = can || atribs[machine][j] == i;
             }
+
+        }
+
      }
 
     return can;
