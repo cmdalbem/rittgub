@@ -3,7 +3,7 @@
 #include <climits>
 #include <ctime>
 
-#define MAX_ITERATIONS 1
+#define MAX_ITERATIONS 10
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
@@ -24,16 +24,18 @@ void randomGreedy();
 void localSearch();
 void updateSolution();
 void printAtribs();
+void printTop();
 
 int main() {
 
 	init();
 
 	readInput();
-	topSort();
-	printInput();
+	//printInput();
 
 	for(int i = 0; i < MAX_ITERATIONS; i++) {
+		topSort();
+		printTop();
 		randomGreedy();
         printAtribs();
    		//localSearch();
@@ -140,27 +142,35 @@ void updateSolution() {
 }
 
 void topSort() {
-	int stack[MAX_TASKS], top, count, r, i, k;
+	int stack[MAX_TASKS], tDegree[MAX_TASKS], top, count, r, i, k;
 
 	top = -1;
 	count = 0;
 	r = 0;
+	
+	for(i=0;i<n;i++)
+		tDegree[i]=degree[i];
 
 	for(i=0;i<n;i++)
-		if(!degree[i])
+		if(!tDegree[i])
 			stack[++top]=i;
 
 
 	while(top>-1)
 	{
-		i=stack[top--];
+		int node = rand() % (top + 1);
+		i=stack[node];
+		for(int b = node+1; b <= top; b++) {
+			stack[b-1] = stack[b];
+		}
+		top--;
 		//printf("%i ",i);
 		topSorted[r++] = i;
 		count++;
 		for(k = 0;k < n;k++)
 		{
 			if(graph[i][k])
-				if(!(--degree[k]))
+				if(!(--tDegree[k]))
 					stack[++top]=k;
 		}
 	}
@@ -194,6 +204,8 @@ void init() {
 	m = 0;
 	currentSolution = INT_MAX;
 	cicle = INT_MAX;
+	
+	srand(time(NULL));
 
 	for(int i = 0; i < MAX_TASKS; i++) {
 		for(int j = 0; j < MAX_TASKS; j++)
@@ -231,7 +243,9 @@ void printInput() {
 	printf("Costs:\n");
 	for(int i = 0; i < n; i++)
 		printf("%i: %i\n", i, costs[i]);
+}
 
+void printTop() {
 	printf("Topological order:\n");
 	for(int i = 0; i < n; ++i)
 			printf("%i ", topSorted[i]);
