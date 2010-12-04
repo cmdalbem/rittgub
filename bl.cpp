@@ -4,7 +4,7 @@
 #include <ctime>
 #include <algorithm>
 
-#define MAX_ITERATIONS 1
+#define MAX_ITERATIONS 9999999999
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
@@ -61,17 +61,27 @@ int main(int argc, char**argv) {
 	init();
 
 	readInput();
-	printInput();
-
-    amain();
-    exit(1);
+	//printInput();
 
 	for(int i = 0; i < MAX_ITERATIONS; i++) {
 		//randomGreedy();
 		greedySoia();
-        printAtribs();
-   		//localSearch();
-		//updateSolution();
+        //printAtribs();
+
+      	int localCicle = 0;
+
+
+       	// calculates the longest cicle between all machines
+	    for(int i = 0; i < m; i++) {
+		    if(atribs[i][MACHINE_CICLE] > localCicle) {
+			    localCicle = atribs[i][MACHINE_CICLE];
+		    }
+	    }
+
+	    printf("Ciclo: %i\n", localCicle);
+
+   		localSearch();
+		updateSolution();
 	}
 
 	int localCicle = 0;
@@ -116,7 +126,7 @@ int canDelegate(int task, int machine) {
 
 void greedySoia() {
 	topSort();
-	printTop();
+	//printTop();
 	for(int i = 0; i < MAX_TASKS; i++) {
 		for(int j = 0; j < MAX_MACHINES; j++)
 			atribs[j][i] = 0;
@@ -210,6 +220,7 @@ void localSearch() {
 	bool improved;
 
 	do {
+//	    printf(".");
 		improved = false;
 		localCicle = 0;
 
@@ -224,7 +235,9 @@ void localSearch() {
 		currentSolution = localCicle;
 
 		for(int i = 0; i < m; i++) {
-			if(i != worstIndex) {
+		    // if we're not looking in the same machine and also if we can
+		    // delegate the last task of the worst machine to this new one
+			if(i != worstIndex && canDelegate(atribs[worstIndex][N_TASKS-1] , i) ) {
 			    int cost = costs[ atribs[worstIndex][LAST_TASK(worstIndex)] ];
 
 				if(atribs[i][MACHINE_CICLE] + cost < atribs[worstIndex][MACHINE_CICLE]) {
