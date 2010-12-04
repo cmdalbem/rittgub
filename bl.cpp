@@ -4,7 +4,7 @@
 #include <ctime>
 #include <algorithm>
 
-#define MAX_ITERATIONS 9999999999
+#define MAX_ITERATIONS 1
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
@@ -26,7 +26,9 @@ void localSearch();
 void updateSolution();
 void printAtribs();
 void printTop();
+void printCosts();
 void greedySoia();
+void greedyFialho();
 
 int canDelegate(int task,int machine);
 
@@ -61,27 +63,18 @@ int main(int argc, char**argv) {
 	init();
 
 	readInput();
-	//printInput();
+	printInput();
 
-	for(int i = 0; i < MAX_ITERATIONS; i++) {
+
+	for(int it = 0; it < MAX_ITERATIONS; it++) {
+        greedyFialho();
 		//randomGreedy();
-		greedySoia();
-        //printAtribs();
-
-      	int localCicle = 0;
-
-
-       	// calculates the longest cicle between all machines
-	    for(int i = 0; i < m; i++) {
-		    if(atribs[i][MACHINE_CICLE] > localCicle) {
-			    localCicle = atribs[i][MACHINE_CICLE];
-		    }
-	    }
-
-	    printf("Ciclo: %i\n", localCicle);
+		//greedySoia();
+        printAtribs();
 
    		localSearch();
-		updateSolution();
+		//updateSolution();
+
 	}
 
 	int localCicle = 0;
@@ -123,6 +116,20 @@ int canDelegate(int task, int machine) {
 
 }
 
+void printCosts() {
+
+    for (unsigned int i = 0; i < n; i += 1) {
+        printf("%d: %d\n",i,costs[i]);
+    }
+
+}
+
+int comp (const void *e1, const void *e2) { return *(int*)e1 - *(int*)e2; }
+
+void greedyFialho() {
+    qsort(costs,n, sizeof(int) , comp );
+    randomGreedy();
+}
 
 void greedySoia() {
 	topSort();
@@ -172,6 +179,7 @@ void greedySoia() {
 
 
 void randomGreedy() {
+
 	for(int i = 0; i < MAX_TASKS; i++) {
 		for(int j = 0; j < MAX_MACHINES; j++)
 			atribs[j][i] = 0;
@@ -179,7 +187,7 @@ void randomGreedy() {
 
 	for(int i = 0; i < n; i++) {
 
-        int task = topSorted[i];
+        int task = i;
 	    int best_bet = INT_MAX;
 	    int index = -1;
 
@@ -220,7 +228,7 @@ void localSearch() {
 	bool improved;
 
 	do {
-//	    printf(".");
+	    printf(".");
 		improved = false;
 		localCicle = 0;
 
