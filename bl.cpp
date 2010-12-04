@@ -2,8 +2,9 @@
 #include <cstdlib>
 #include <climits>
 #include <ctime>
+#include <algorithm>
 
-#define MAX_ITERATIONS 10
+#define MAX_ITERATIONS 1
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
@@ -25,24 +26,89 @@ void localSearch();
 void updateSolution();
 void printAtribs();
 void printTop();
+void greedySoia();
 
-int main() {
+int main(int argc, char**argv) {
 
+	if(argc < 2) {
+		printf("Missing arguments. Use it like this:\n./bl number_of_machines [< input_file]\n");
+		exit(1);
+	}
+	if(argc > 2) {
+		printf("Too many arguments. Use it like this:\n./bl number_of_machines [< input_file]\n");
+		exit(1);
+	}
+	
+	m = atoi(argv[1]);
 	init();
 
 	readInput();
-	//printInput();
+	printInput();
 
 	for(int i = 0; i < MAX_ITERATIONS; i++) {
-		topSort();
-		printTop();
-		randomGreedy();
+		//randomGreedy();
+		greedySoia();
         printAtribs();
    		//localSearch();
 		//updateSolution();
 	}
+	
+	int localCicle = 0;
 
-	printf("Menor tempo de cicle: %i\n", cicle);
+	// calculates the longest cicle between all machines
+	for(int i = 0; i < m; i++) {
+		if(atribs[i][MACHINE_CICLE] > localCicle) {
+			localCicle = atribs[i][MACHINE_CICLE];
+		}
+	}
+
+	printf("Menor tempo de cicle: %i\n", localCicle);
+}
+
+void greedySoia() {
+	topSort();
+	printTop();
+	for(int i = 0; i < MAX_TASKS; i++) {
+		for(int j = 0; j < MAX_MACHINES; j++)
+			atribs[j][i] = 0;
+	}
+	
+	int totalCost = 0, highestCost = 0, minPossibleCicle;
+	
+	for(int i = 0; i < n; i++) {
+		totalCost+=costs[i];
+		if(costs[i] > highestCost)
+			highestCost = costs[i];
+	}
+	
+	
+	minPossibleCicle = std::max(highestCost, (int)(totalCost / m));
+	printf("minPossibleCicle: %d\n", minPossibleCicle);
+	int currentTask = 0;
+
+	for(int i = 0; i < m; i++) {
+		int task = topSorted[currentTask];
+		while(currentTask < n && atribs[i][MACHINE_CICLE] + costs[task] < minPossibleCicle) {
+			
+			atribs[i][N_TASKS]++;
+			atribs[i][LAST_TASK(i)] = task;
+			atribs[i][MACHINE_CICLE]+=costs[task];
+			task = topSorted[++currentTask];
+		}
+				
+		if(currentTask < n && (atribs[i][MACHINE_CICLE] + costs[task] - minPossibleCicle < minPossibleCicle - atribs[i][MACHINE_CICLE])) {
+			atribs[i][N_TASKS]++;
+			atribs[i][LAST_TASK(i)] = task;
+			atribs[i][MACHINE_CICLE]+=costs[task];
+			currentTask++;
+		}
+	}
+	
+	for(int i = currentTask; i < n; i++) {
+		atribs[m-1][N_TASKS]++;
+		atribs[m-1][LAST_TASK(m-1)] = topSorted[i];
+		atribs[m-1][MACHINE_CICLE]+=costs[topSorted[i]];
+	}
 }
 
 
@@ -193,7 +259,6 @@ void readInput() {
 void init() {
 
 	n = 0;
-	m = 0;
 	currentSolution = INT_MAX;
 	cicle = INT_MAX;
 	
