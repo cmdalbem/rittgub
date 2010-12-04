@@ -72,7 +72,7 @@ int main(int argc, char**argv) {
 		//greedySoia();
         printAtribs();
 
-   		localSearch();
+  // 		localSearch();
 		//updateSolution();
 
 	}
@@ -127,7 +127,7 @@ void printCosts() {
 int comp (const void *e1, const void *e2) { return *(int*)e1 - *(int*)e2; }
 
 void greedyFialho() {
-    qsort(costs,n, sizeof(int) , comp );
+//    qsort(costs,n, sizeof(int) , comp );
     randomGreedy();
 }
 
