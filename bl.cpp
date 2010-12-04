@@ -28,6 +28,20 @@ void printAtribs();
 void printTop();
 void greedySoia();
 
+int canDelegate(int task,int machine);
+
+int amain() {
+
+    printf("%d\n",canDelegate(1,0));
+    printf("%d\n",canDelegate(0,0));
+    atribs[0][0];
+    atribs[0][N_TASKS] = 1;
+    printf("%d\n",canDelegate(1,0));
+    printf("%d\n",canDelegate(7,0));
+    exit(1);
+}
+
+
 int main(int argc, char**argv) {
 
 	if(argc < 2) {
@@ -38,12 +52,14 @@ int main(int argc, char**argv) {
 		printf("Too many arguments. Use it like this:\n./bl number_of_machines [< input_file]\n");
 		exit(1);
 	}
-	
+
 	m = atoi(argv[1]);
 	init();
 
 	readInput();
 	printInput();
+
+    amain();
 
 	for(int i = 0; i < MAX_ITERATIONS; i++) {
 		//randomGreedy();
@@ -52,7 +68,7 @@ int main(int argc, char**argv) {
    		//localSearch();
 		//updateSolution();
 	}
-	
+
 	int localCicle = 0;
 
 	// calculates the longest cicle between all machines
@@ -65,6 +81,21 @@ int main(int argc, char**argv) {
 	printf("Menor tempo de cicle: %i\n", localCicle);
 }
 
+int canDelegate(int task, int machine) {
+
+    int can = 0;
+
+    for (int i=0; i < n; i++) {
+            for (int j=0; j < LAST_TASK(machine); j++) {
+                can = can || atribs[machine][j] == graph[task][i];
+            }
+     }
+
+    return can;
+
+}
+
+
 void greedySoia() {
 	topSort();
 	printTop();
@@ -72,16 +103,16 @@ void greedySoia() {
 		for(int j = 0; j < MAX_MACHINES; j++)
 			atribs[j][i] = 0;
 	}
-	
+
 	int totalCost = 0, highestCost = 0, minPossibleCicle;
-	
+
 	for(int i = 0; i < n; i++) {
 		totalCost+=costs[i];
 		if(costs[i] > highestCost)
 			highestCost = costs[i];
 	}
-	
-	
+
+
 	minPossibleCicle = std::max(highestCost, (int)(totalCost / m));
 	printf("minPossibleCicle: %d\n", minPossibleCicle);
 	int currentTask = 0;
@@ -89,13 +120,13 @@ void greedySoia() {
 	for(int i = 0; i < m; i++) {
 		int task = topSorted[currentTask];
 		while(currentTask < n && atribs[i][MACHINE_CICLE] + costs[task] < minPossibleCicle) {
-			
+
 			atribs[i][N_TASKS]++;
 			atribs[i][LAST_TASK(i)] = task;
 			atribs[i][MACHINE_CICLE]+=costs[task];
 			task = topSorted[++currentTask];
 		}
-				
+
 		if(currentTask < n && (atribs[i][MACHINE_CICLE] + costs[task] - minPossibleCicle < minPossibleCicle - atribs[i][MACHINE_CICLE])) {
 			atribs[i][N_TASKS]++;
 			atribs[i][LAST_TASK(i)] = task;
@@ -103,7 +134,7 @@ void greedySoia() {
 			currentTask++;
 		}
 	}
-	
+
 	for(int i = currentTask; i < n; i++) {
 		atribs[m-1][N_TASKS]++;
 		atribs[m-1][LAST_TASK(m-1)] = topSorted[i];
@@ -205,7 +236,7 @@ void topSort() {
 	top = -1;
 	count = 0;
 	r = 0;
-	
+
 	for(i=0;i<n;i++)
 		tDegree[i]=degree[i];
 
@@ -261,7 +292,7 @@ void init() {
 	n = 0;
 	currentSolution = INT_MAX;
 	cicle = INT_MAX;
-	
+
 	srand(time(NULL));
 
 	for(int i = 0; i < MAX_TASKS; i++) {
