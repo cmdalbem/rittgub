@@ -8,7 +8,7 @@
 #include <cassert>
 #include <cmath>
 
-#define MAX_ITERATIONS 100000
+#define MAX_ITERATIONS 10000
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
@@ -27,8 +27,9 @@ int atribs[MAX_MACHINES][MAX_TASKS];
 int degree[MAX_TASKS], topSorted[MAX_TASKS];
 
 Candidate rcl[MAX_MACHINES];
+int numCandidates = 5;
 
-float randomization = 0.3;
+float randomization = 0.01;
 
 void init();
 void readInput();
@@ -89,16 +90,19 @@ void initRcl(int rclSize);
 
 int main(int argc, char**argv) {
 
-	if(argc < 2) {
-		printf("Missing arguments. Use it like this:\n./bl number_of_machines [< input_file]\n");
+    const char* message = "Missing arguments. Use it like this:\n./bl num_machines num_candidates [< input_file]\n";
+	if(argc < 3) {
+		puts(message);
 		exit(1);
 	}
-	if(argc > 2) {
-		printf("Too many arguments. Use it like this:\n./bl number_of_machines [< input_file]\n");
+	if(argc > 3) {
+		puts(message);
 		exit(1);
 	}
 
 	m = atoi(argv[1]);
+	numCandidates = atoi(argv[2]);
+
 	init();
 
 	readInput();
@@ -151,7 +155,7 @@ int canDelegate(int task, int machine) {
     return can;
 }
 
-int comp (const void *e1, const void *e2) { return -(*(int*)e2 - *(int*)e1); }
+int comp (const void *e1, const void *e2) { return (*(int*)e2 - *(int*)e1); }
 
 void greedyFialho() {
     qsort(costs,n, sizeof(int) , comp );
@@ -240,7 +244,7 @@ void printRcl(int rclSize) {
 
 void randomGreedy() {
 
-    int rclSize = ceil(m * randomization);
+    int rclSize = 2;//ceil(m * randomization);
 
     //clean atributions
 	for(int i = 0; i < MAX_TASKS; i++) {
@@ -248,7 +252,6 @@ void randomGreedy() {
 			atribs[j][i] = 0;
 	}
 
-    int localCicle = 0;
     int numDelegated;
 
 	for(int i = 0; i < n; i++) {
@@ -440,9 +443,9 @@ void init() {
 
 void printAtribs() {
 
-    for (unsigned int i = 0; i < m; i += 1) {
+    for (int i = 0; i < m; i += 1) {
         printf("%d: ",i);
-        for (unsigned int j = 0; j < atribs[i][N_TASKS]; j += 1) {
+        for (int j = 0; j < atribs[i][N_TASKS]; j += 1) {
             printf(" %d ",atribs[i][j]);
         }
         printf("\n");
@@ -472,7 +475,7 @@ void printTop() {
 }
 
 void printCosts() {
-    for (unsigned int i = 0; i < n; i += 1) {
+    for (int i = 0; i < n; i += 1) {
         printf("%d: %d\n",i,costs[i]);
     }
 }
