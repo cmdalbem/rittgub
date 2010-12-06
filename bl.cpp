@@ -86,6 +86,8 @@ int main(int argc, char**argv) {
 	readInput();
 	//printInput();
 
+    int elapsed = time(0);
+
 	for(int it = 0; it < MAX_ITERATIONS; it++) {
 
 		if (isSoia)
@@ -99,9 +101,11 @@ int main(int argc, char**argv) {
 
 	}
 
+    elapsed = time(0) - elapsed;
+
 	//int localCicle = longestCicle();
 
-	printf("%i\n", cicle);
+	printf("%i %i\n", elapsed, cicle);
 }
 
 int longestCicle() {
