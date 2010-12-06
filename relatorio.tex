@@ -3,6 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[num]{abntcite} % Carregamos o pacote abntcite com a opção alf, ou seja, citações alfanuméricas
 \usepackage{listings}
+\usepackage{hyperref}
 \usepackage{url}
 %\RequirePackage[colorlinks=false,hyperindex,plainpages=false]{hyperref}
 
@@ -19,8 +20,14 @@
 }
 
 
-\author{Cristiano Medeiros Dalbem \and Fábio da Fontoura Beltrão \and Lucas Fialho Zawacki}
 \title{GRASP Aplicado ao Problema de Balanceamento de Linhas de Produção}
+\author{Cristiano Medeiros Dalbem \and Fábio da Fontoura Beltrão \and Lucas Fialho Zawacki\\
+\\
+\\
+\small Otimização Combinatória (INF05010) - Prof. Marcus Ritt\\
+\small Instituto de Informática\\[-0.8ex]
+\small Universidade Federal do Rio Grande do Sul
+}
 %\date{}
 
 \begin{document}
@@ -29,6 +36,12 @@
 \tableofcontents
 
 \chapter{Introdução}
+
+O trabalho final da disciplina de Otimização Combinatória consiste na escolha de um problema de otimização e de uma meta-heurística, e o objetivo é implementar uma solução para aquele utilizando-se deste. O problema escolhido foi o Balanceamento de linhas de produção \cite{salbp}, e a meta-heurística a GRASP \cite{grasp}.
+
+GRASP é um acrônimo para \emph{Greedy Randomized Adaptive Search Procedure}, cujo nome já especifica muito bem a sua filosofia. O objetivo é formular o programa com uma heurística gulosa, e o procedimento de resolução da meta-heurística randomizará cada passo com uma das soluções "mais gulosas". Para cada solução criada é feita uma Busca Local (Best Fit ou First Fit, dependendo da implementação), e o processo é repetido por um número pré-determinado de iterações.
+
+Como objetivos adicionais do trabalho estão a formulação do problema como um problema de programação inteira/linear, e a execução das soluções desenvolvidas (GLPK e GRASP) sobre um conjunto de casos de teste providos pelo professor.
 
 \chapter{Definição do Problema}
 
@@ -50,6 +63,55 @@ precedência, i.e. para cada $tu \in P$, $s(t) \leq s(u)$.
 \end{description}
 
 
+\chapter{Programação inteira}
+
+\section{Formulação inteira}
+
+\begin{center}
+\begin{tabular}{ r l }
+  \textbf{min} & x \\
+  \textbf{s.a} & $a = 1$ \\
+  & $b = 2$ \\
+  & $x = INF$ \\
+\end{tabular}
+\end{center}
+
+\section{Solução em GLPK}
+
+\begin{lstlisting}
+set prods;
+
+param custoInicial{prods} >= 0;
+param preco{prods} >= 0;
+
+var quantidade{ prods } >= 0, integer;
+var produz{prods } binary;
+
+maximize lucro:
+	sum {j in prods} (preco[j]*quantidade[j] - custoInicial[j]*produz[j]);
+
+subject to limiteProducao:
+	(sum {j in prods} produz[j]) <= 2;
+
+subject to limiteQuantidade:
+	(produz['1'] + produz['2'])*2 >= produz['3'] + produz['4'];
+
+subject to precisaProduzir {j in prods}:
+	quantidade[j] <= 2000*produz[j];
+
+
+data;
+
+param : prods : custoInicial preco :=
+	'1'	50000		70
+	'2'	40000		60
+	'3'	70000		90
+	'4'	60000		80;
+
+end;
+\end{lstlisting}
+
+
 
 
 \chapter{GRASP}
@@ -65,5 +127,12 @@ somente tempo de execução) como eficiência na qualidade da resposta.
 \chapter{Resultados}
 
 \chapter{Conclusão}
+
+
+\thebibliography{9}
+
+\bibitem{salbp}
+	\url{http://www.assembly-line-balancing.de/index.php?content=classview&content2=classview&content3=classviewdlfree&content4=classview&classID=28&type=dl}
+	\emph{Homepage for Assembly Line Optimization Research (Assembly Line Balancing and Sequencing)}
 
 \end{document}
