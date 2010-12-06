@@ -20,6 +20,10 @@ typedef struct _candidate {
     int index;
 }Candidate;
 
+/*
+    GLOBAL VARIABLES
+*/
+
 int graph[MAX_TASKS][MAX_TASKS];
 int costs[MAX_TASKS];
 int n, m, currentSolution, cicle;
@@ -28,9 +32,12 @@ int degree[MAX_TASKS], topSorted[MAX_TASKS];
 
 Candidate rcl[MAX_MACHINES];
 int numCandidates = 5;
+int seed;
 
-float randomization = 0.01;
-
+/*
+    FUNCTIONS
+    //TODO separate them
+*/
 void init();
 void readInput();
 void topSort();
@@ -47,24 +54,29 @@ void greedyFialho();
 int longestCicle();
 int canDelegate(int task,int machine);
 
+/*
+    RCL
+*/
 void insertRcl(Candidate c, int rclSize);
 void printRcl(int rclSize);
 void initRcl(int rclSize);
 
 int main(int argc, char**argv) {
 
-    const char* message = "Missing arguments. Use it like this:\n./bl num_machines num_candidates [< input_file]\n";
+    const char* message = "Missing arguments. Use it like this:\n\
+                           ./bl num_machines num_candidates [seed] [< input_file]\n";
 	if(argc < 3) {
 		puts(message);
 		exit(1);
 	}
-	if(argc > 3) {
+	if(argc > 4) {
 		puts(message);
 		exit(1);
 	}
 
 	m = atoi(argv[1]);
 	numCandidates = atoi(argv[2]);
+    seed = argc == 4 ? atoi(argv[3]) : 0;
 
 	init();
 
@@ -282,7 +294,7 @@ void randomGreedy() {
 }
 
 void localSearch() {
-	int worstIndex, localCicle;
+	int worstIndex = 0, localCicle;
 	bool improved;
 
 	do {
@@ -390,7 +402,7 @@ void init() {
 	currentSolution = INT_MAX;
 	cicle = INT_MAX;
 
-	srand(1);
+	srand(seed);
 
 	for(int i = 0; i < MAX_TASKS; i++) {
 		for(int j = 0; j < MAX_TASKS; j++)
