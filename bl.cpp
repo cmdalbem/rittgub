@@ -28,7 +28,7 @@ int degree[MAX_TASKS], topSorted[MAX_TASKS];
 
 Candidate rcl[MAX_MACHINES];
 
-float randomization = 0.1;
+float randomization = 0.3;
 
 void init();
 void readInput();
@@ -82,7 +82,7 @@ void initRcl(int rclSize);
 //    printf("1,1 %d\n",canDelegate(1,1));
 //    atribs[1][0] = 1;
 //    atribs[1][N_TASKS]++;
-//    printf("2,1 %d\n",canDelegate(2,1));
+//    printf("2,2 %d\n",canDelegate(2,2));
 //    printf("7,0 %d\n",canDelegate(7,0));
 
 //}
@@ -105,8 +105,8 @@ int main(int argc, char**argv) {
 	printInput();
 
 	for(int it = 0; it < MAX_ITERATIONS; it++) {
-        //greedyFialho();
-		randomGreedy();
+        greedyFialho();
+		//randomGreedy();
 		//greedySoia();
 
    		localSearch();
@@ -213,7 +213,7 @@ void insertRcl(Candidate c, int rclSize) {
              (c.value == rcl[i].value && c.index <= rcl[i].index) )
            {
             // shifts everyone to the front
-            memmove( rcl+i+1, rcl+i , (rclSize - i)*sizeof(int) );
+            memmove( rcl+i+1, rcl+i , (rclSize - i)*sizeof(Candidate) );
             rcl[i] = c;
             inserted = 1;
         }
@@ -248,8 +248,6 @@ void randomGreedy() {
 			atribs[j][i] = 0;
 	}
 
-    int best_bet = INT_MAX;
-    int index = -1;
     int localCicle = 0;
     int numDelegated;
 
@@ -284,23 +282,32 @@ void randomGreedy() {
                 insertRcl(local,rclSize);
 
             } else {
-                //printf("Couldnt delegate\n");
+            //    printf("Couldnt delegate task %d in machine %d\n",i,j);
+            //    printAtribs();
             }
 
 		}
 
+        if (numDelegated == 0) {
+            printf("tarefa %d\n",i);
+            printAtribs();
+        }
+
         assert(numDelegated > 0);
-        printf("Size: %d\n",numDelegated);
-        int chosen = rcl[rand()%numDelegated].index;
-        printf("Chosen: %d\n",chosen);
-        printRcl(rclSize);
+        int size = std::min(numDelegated,rclSize);
+
+        //printf("Size: %d\n",size);
+        int chosen = rcl[rand()%size].index;
+        //printf("Chosen: %d\n",chosen);
+        //printRcl(rclSize);
 
         //printf("rclSize: %d\n",rclSize);
         //printRcl(rclSize);
 
         //printf("Index: %d\n",index);
+
         atribs[chosen][N_TASKS]++;
-        atribs[chosen][LAST_TASK(index)] = i;
+        atribs[chosen][LAST_TASK(chosen)] = i;
         atribs[chosen][MACHINE_CICLE] += costs[i];
         //printAtribs();
 
