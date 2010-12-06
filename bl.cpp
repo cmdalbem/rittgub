@@ -5,6 +5,8 @@
 #include <ctime>
 #include <algorithm>
 #include <unistd.h>
+#include <cassert>
+#include <cmath>
 
 #define MAX_ITERATIONS 10000
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
@@ -24,9 +26,9 @@ int n, m, currentSolution, cicle;
 int atribs[MAX_MACHINES][MAX_TASKS];
 int degree[MAX_TASKS], topSorted[MAX_TASKS];
 
-Candidate rcl[MAX_TASKS];
+Candidate rcl[MAX_MACHINES];
 
-float randomization = 1;
+float randomization = 0.1;
 
 void init();
 void readInput();
@@ -207,7 +209,9 @@ void insertRcl(Candidate c, int rclSize) {
     bool inserted = 0;
 
     for (int i=0; i < rclSize && !inserted ; i++) {
-        if ( c.value <= rcl[i].value ) {
+        if ( c.value < rcl[i].value ||
+             (c.value == rcl[i].value && c.index <= rcl[i].index) )
+           {
             // shifts everyone to the front
             memmove( rcl+i+1, rcl+i , (rclSize - i)*sizeof(int) );
             rcl[i] = c;
@@ -221,6 +225,7 @@ void initRcl(int rclSize) {
 
     for( int i=0; i < rclSize; i++) {
         rcl[i].value = INT_MAX;
+        rcl[i].index = INT_MAX;
     }
 
 }
@@ -235,8 +240,7 @@ void printRcl(int rclSize) {
 
 void randomGreedy() {
 
-    int rclSize = n * randomization;
-    initRcl(rclSize);
+    int rclSize = ceil(m * randomization);
 
     //clean atributions
 	for(int i = 0; i < MAX_TASKS; i++) {
@@ -244,50 +248,64 @@ void randomGreedy() {
 			atribs[j][i] = 0;
 	}
 
-	for(int i = 0; i < n; i++) {
+    int best_bet = INT_MAX;
+    int index = -1;
+    int localCicle = 0;
+    int numDelegated;
 
-        int task = i;
+	for(int i = 0; i < n; i++) {
+        initRcl(rclSize);
+        numDelegated = 0;
 
 		for(int j = 0; j < m; j++) {
 
-            if ( canDelegate( task , j ) ) {
+            if ( canDelegate( i , j ) ) {
+                //printf("Can delegate\n");
+                numDelegated++;
 
-                int new_cicle = atribs[j][MACHINE_CICLE] + costs[task];
+                int new_cicle = atribs[j][MACHINE_CICLE] + costs[i];
+
                 int localCicle = 0;
 
-//                // calculates the longest cicle between all machines
-//                for(int k = 0; k < m; k++) {
+                // calculates the longest cicle between all machines
+                for(int k = 0; k < m; k++) {
+                    int current_cicle = atribs[k][MACHINE_CICLE];
 
-//                    int current_cicle = atribs[k][MACHINE_CICLE];
+                    if (k == j) {
+                        current_cicle = new_cicle;
+                    }
 
-//                    if (k == j) {
-//                        current_cicle = new_cicle;
-//                    }
+	                if( current_cicle > localCicle) {
+		                localCicle = current_cicle;
+	                }
+                }
 
-//	                if( current_cicle > localCicle) {
-//		                localCicle = current_cicle;
-//	                }
-//                }
-
-                Candidate local = { new_cicle, j };
+                Candidate local = { localCicle, j };
                 insertRcl(local,rclSize);
-                printRcl(rclSize);
 
             } else {
-                printf("Couldnt delegate\n");
+                //printf("Couldnt delegate\n");
             }
 
 		}
 
-        int index = rcl[i].index;
-        printf("rclSize: %d\n",rclSize);
-        exit(1);
+        assert(numDelegated > 0);
+        printf("Size: %d\n",numDelegated);
+        int chosen = rcl[rand()%numDelegated].index;
+        printf("Chosen: %d\n",chosen);
+        printRcl(rclSize);
 
-        atribs[index][N_TASKS]++;
-        atribs[index][LAST_TASK(index)] = task;
-        atribs[index][MACHINE_CICLE] += costs[task];
+        //printf("rclSize: %d\n",rclSize);
+        //printRcl(rclSize);
+
+        //printf("Index: %d\n",index);
+        atribs[chosen][N_TASKS]++;
+        atribs[chosen][LAST_TASK(index)] = i;
+        atribs[chosen][MACHINE_CICLE] += costs[i];
+        //printAtribs();
 
 	}
+
 }
 
 void localSearch() {
@@ -399,7 +417,7 @@ void init() {
 	currentSolution = INT_MAX;
 	cicle = INT_MAX;
 
-	srand(time(NULL));
+	srand(1);
 
 	for(int i = 0; i < MAX_TASKS; i++) {
 		for(int j = 0; j < MAX_TASKS; j++)
