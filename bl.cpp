@@ -34,6 +34,7 @@ Candidate rcl[MAX_MACHINES];
 int numCandidates = 5;
 int seed = time(NULL);
 int isSoia;
+int isToCreateGlpk;
 
 /*
     FUNCTIONS
@@ -62,10 +63,81 @@ void insertRcl(Candidate c, int rclSize);
 void printRcl(int rclSize);
 void initRcl(int rclSize);
 
+void createGlpk() {
+
+	FILE * file;
+    char buffer [100];
+
+    char filename[30];
+    int filenum=0;
+    sprintf(filename,"glpk/%i",filenum);
+    while( fopen (filename,"r") != NULL ) {
+		filenum++;
+		sprintf(filename,"glpk/%i",filenum);
+	}
+	
+	file = fopen (filename,"w");
+	
+	fprintf(file,"param M;\
+param N;\n\
+param costs{1..N} >= 0;\n\
+param prec{1..N, 1..N} >=0;\n\
+\n\
+var cicletime, integer;\n\
+var delegate{1..N,1..M} >= 0, binary;\n\
+\n\
+\n\
+minimize minCicleTime:\n\
+cicletime;\n\
+\n\
+subject to cicleTimeLimit {j in 1..M}:\n\
+(sum {i in 1..N} costs[i]*delegate[i,j]) <= cicletime;\n\
+\n\
+subject to delegateAll {i in 1..N}:\n\
+(sum {j in 1..M} delegate[i,j]) = 1;\n\
+\n\
+subject to respectPrecedences {u in 1..N, v in 1..N}:\n\
+if prec[u,v] == 1 then\n\
+(sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);\n\n");
+	
+	fprintf(file,"data;\n");
+	
+	fprintf(file,"param M := %i;\n",m);
+	fprintf(file,"param N := %i;\n\n",n);
+	
+	fprintf(file,"param costs :=\n");
+	for(int i = 0; i < n; i++) {
+		fprintf(file,"%i %i", i+1, costs[i]);
+		if(i==n-1)
+			fprintf(file,";",n);
+		fprintf(file,"\n",n);	
+	}
+
+	fprintf(file,"param prec :\n");
+	for(int i=0; i<n; i++)
+		fprintf(file,"%i ",i+1);
+	fprintf(file,":=\n");
+	
+	int j;
+	for(int i = 0; i < n; i++) {
+		fprintf(file,"%i ",i+1);
+		for(j = 0; j < n; j++)
+			fprintf(file,"%i ", graph[j][i]);
+		if(i==n-1)
+			fprintf(file,";\n");
+		else
+			fprintf(file,"\n");
+	}
+	
+	fprintf(file,"end;");
+	
+	fclose(file);
+}
+
 int main(int argc, char**argv) {
 
     const char* message = "Missing arguments. Use it like this:\n\
-            ./bl num_machines alpha type [seed] [< input_file]\n";
+            ./bl num_machines alpha type createGlpk [seed] [< input_file]\n";
 	if(argc < 4) {
 		puts(message);
 		exit(1);
@@ -78,34 +150,41 @@ int main(int argc, char**argv) {
 	m = atoi(argv[1]);
 	alpha = atoi(argv[2]);
     isSoia = atoi(argv[3]);
+    isToCreateGlpk = atoi(argv[4]);
 
     seed = argc == 5 ? atoi(argv[4]) : time(NULL);
 
 	init();
 
 	readInput();
-	//printInput();
+	
+	if(isToCreateGlpk)
+		createGlpk();
+	else
+	{
+		//printInput();
 
-    int elapsed = time(0);
+		int elapsed = time(0);
 
-	for(int it = 0; it < MAX_ITERATIONS; it++) {
+		for(int it = 0; it < MAX_ITERATIONS; it++) {
 
-		if (isSoia)
-		    greedySoia();
-        else
-            randomGreedy();
+			if (isSoia)
+				greedySoia();
+			else
+				randomGreedy();
 
-   		localSearch();
-		updateSolution();
-		
-		//printAtribs();
+			localSearch();
+			updateSolution();
+			
+			//printAtribs();
+		}
+
+		elapsed = time(0) - elapsed;
+
+		//int localCicle = longestCicle();
+
+		printf("%i %i\n", elapsed, cicle);
 	}
-
-    elapsed = time(0) - elapsed;
-
-	//int localCicle = longestCicle();
-
-	printf("%i %i\n", elapsed, cicle);
 }
 
 int longestCicle() {
