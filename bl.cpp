@@ -228,7 +228,7 @@ void initRcl(int rclSize) {
 void printRcl(int rclSize) {
 
     for (int i = 0; i < rclSize; i++) {
-        printf("[%d]\n",rcl[i].value);
+        printf("[%d,%d]\n",rcl[i].value,rcl[i].index);
     }
 
 }
@@ -252,8 +252,6 @@ void randomGreedy() {
 
             if ( canDelegate( task , j ) ) {
 
-                printRcl(rclSize);
-
                 int new_cicle = atribs[j][MACHINE_CICLE] + costs[task];
                 int localCicle = 0;
 
@@ -273,6 +271,7 @@ void randomGreedy() {
 
                 Candidate local = { new_cicle, j };
                 insertRcl(local,rclSize);
+                printRcl(rclSize);
 
             } else {
                 printf("Couldnt delegate\n");
