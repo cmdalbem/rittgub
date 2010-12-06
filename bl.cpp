@@ -51,43 +51,6 @@ void insertRcl(Candidate c, int rclSize);
 void printRcl(int rclSize);
 void initRcl(int rclSize);
 
-//void amain() {
-
-//    int rclSize = n * randomization;
-//    initRcl(rclSize);
-
-//    Candidate c1 = {1,0}, c2 = {2,1} , c3 = {0,3}, c4 = {-1,4} ,c5 = {10,5}, c6 = {3,6};
-//    insertRcl(c1,rclSize);
-//        printRcl(rclSize);
-//    insertRcl(c2,rclSize);
-//        printRcl(rclSize);
-//    insertRcl(c3,rclSize);
-//            printRcl(rclSize);
-//    insertRcl(c4,rclSize);
-//            printRcl(rclSize);
-//    insertRcl(c5,rclSize);
-//    printRcl(rclSize);
-//      insertRcl(c6,rclSize);
-
-//    //insertRcl(c4,rclSize);
-//    printRcl(rclSize);
-//}
-
-//int amain() {
-
-//    printf("1,0 %d\n",canDelegate(1,0));
-//    printf("0,0 %d\n",canDelegate(0,0));
-//    atribs[0][0] = 0;
-//    atribs[0][N_TASKS]++;
-//    printf("2,1 %d\n",canDelegate(2,1));
-//    printf("1,1 %d\n",canDelegate(1,1));
-//    atribs[1][0] = 1;
-//    atribs[1][N_TASKS]++;
-//    printf("2,2 %d\n",canDelegate(2,2));
-//    printf("7,0 %d\n",canDelegate(7,0));
-
-//}
-
 int main(int argc, char**argv) {
 
     const char* message = "Missing arguments. Use it like this:\n./bl num_machines num_candidates [< input_file]\n";
@@ -106,7 +69,7 @@ int main(int argc, char**argv) {
 	init();
 
 	readInput();
-	printInput();
+	//printInput();
 
 	for(int it = 0; it < MAX_ITERATIONS; it++) {
         greedyFialho();
@@ -121,7 +84,7 @@ int main(int argc, char**argv) {
 
 	//int localCicle = longestCicle();
 
-	printf("Menor tempo de cicle: %i\n", cicle);
+	printf("%i\n", cicle);
 }
 
 int longestCicle() {
