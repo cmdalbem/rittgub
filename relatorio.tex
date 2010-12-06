@@ -37,26 +37,43 @@
 
 \chapter{Introdução}
 
-O trabalho final da disciplina de Otimização Combinatória consiste na escolha de um problema de otimização e de uma meta-heurística, e o objetivo é implementar uma solução para aquele utilizando-se deste. O problema escolhido foi o Balanceamento de linhas de produção \cite{salbp}, e a meta-heurística a GRASP \cite{grasp}.
+O trabalho final da disciplina de Otimização Combinatória consiste na escolha de
+ um problema de otimização e de uma meta-heurística, e o objetivo é implementar
+ uma solução para aquele utilizando-se deste. O problema escolhido foi o
+ Balanceamento de linhas de produção \cite{salbp}, e a meta-heurística a GRASP \cite{grasp}.
 
-GRASP é um acrônimo para \emph{Greedy Randomized Adaptive Search Procedure}, cujo nome já especifica muito bem a sua filosofia. O objetivo é formular o programa com uma heurística gulosa, e o procedimento de resolução da meta-heurística randomizará cada passo com uma das soluções "mais gulosas". Para cada solução criada é feita uma Busca Local (Best Fit ou First Fit, dependendo da implementação), e o processo é repetido por um número pré-determinado de iterações.
+GRASP é um acrônimo para \emph{Greedy Randomized Adaptive Search Procedure},
+cujo nome já especifica muito bem a sua filosofia. O objetivo é formular o
+programa com uma heurística gulosa, e o procedimento de resolução da
+meta-heurística randomizará cada passo com uma das soluções "mais gulosas".
+Para cada solução criada é feita uma Busca Local (Best Fit ou First Fit,
+dependendo da implementação), e o processo é repetido por um número
+pré-determinado de iterações.
 
-Como objetivos adicionais do trabalho estão a formulação do problema como um problema de programação inteira/linear, e a execução das soluções desenvolvidas (GLPK e GRASP) sobre um conjunto de casos de teste providos pelo professor.
+Como objetivos adicionais do trabalho estão a formulação do problema como
+um problema de programação inteira/linear, e a execução das soluções
+desenvolvidas (GLPK e GRASP) sobre um conjunto de casos de
+teste providos pelo professor.
 
 \chapter{Definição do Problema}
 
 Tirada diretamente da definição do trabalho.
 
-Uma linha de produção consiste em uma série de estações de trabalho. Dado um conjunto de tarefas com restrições de
-precedência, temos que atribuir as tarefas às estações, tal que a precedência é respeitada. Cada tarefa possui um tempo
-de execução. O tempo total das tarefas de uma estação define a sua \emph{carga}, e a carga máxima entre todas as
+Uma linha de produção consiste em uma série de estações de trabalho.
+Dado um conjunto de tarefas com restrições de
+precedência, temos que atribuir as tarefas às estações, tal que a precedência
+é respeitada. Cada tarefa possui um tempo
+de execução. O tempo total das tarefas de uma estação define a sua
+\emph{carga}, e a carga máxima entre todas as
 estações define o \emph{tempo de ciclo}. Formalmente
 
 \begin{description}
- \item [Instância] Um grafo G = (T,P) direcionado acíclico sobre um conjunto de tarefas T, o tempo de execução $t_i$ de
+ \item [Instância] Um grafo G = (T,P) direcionado acíclico sobre um conjunto de
+ tarefas T, o tempo de execução $t_i$ de
 cada tarefa $i \in T$, e um número $m$ de estações de trabalho.
 
- \item [Solução] Uma atribuição $s : T \rightarrow [m]$ das tarefas às estações que satisfaz as restrições de
+ \item [Solução] Uma atribuição $s : T \rightarrow [m]$ das tarefas às
+ estações que satisfaz as restrições de
 precedência, i.e. para cada $tu \in P$, $s(t) \leq s(u)$.
 
  \item [Objetivo] Minimizar o tempo de ciclo  $max_{i\in[m]}\sum_{j\in T\mid s(t)=i}t_j$.
@@ -111,9 +128,6 @@ param : prods : custoInicial preco :=
 end;
 \end{lstlisting}
 
-
-
-
 \chapter{GRASP}
 
 O grupo tentou duas abordagens para a resolver o problema. Uma delas se encaixa
@@ -133,12 +147,8 @@ cheia o último seja descartado. Após construir a \emph{RCL} retiramos um dos
 elementos de maneira aleatória e esta será a máquina na qual deveremos inserir
 a tarefa atual.
 
-O processo é repetido para cada uma das tarefas e no quando ele acaba teremos
+O processo é repetido para cada uma das tarefas e quando ele acaba teremos
 uma atribuição de tarefas $i$ para cada uma das $j$ máquinas.
-
-\subsection{Limitações}
-
-Xinagar
 
 \section{Busca Local}
 
@@ -162,6 +172,50 @@ quantidade de máquinas m*, que definem este tempo, for
 menor. Isto evita que a busca local entre em loop, mas não impede que
 eventualmente ela melhore as \emph{cargas} de
 todas máquinas m*, melhorando o \emph{tempo de ciclo} global.
+
+\subsection{Resultados e Limitações}
+
+Esta abordagem, principalmente a etapa de construção gulosa, não se mostrou muito
+efetiva e os resultados deixaram a desejar. A seguir uma lista com os resultados:
+
+Todos resultados foram obtidos utilizando como limite 100000 iterações.
+
+\begin{table}[htbp]
+ \begin{tabular}{|c|c|c|c|c|}
+  \hline
+  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
+  \hline
+  Arcus2 & 27 & 5689 & 6125 & 92.88 \\
+  \hline
+  Arcus2 & 9 & 16711 & 16839 & 99.23 \\
+  \hline
+  Bathol2 & 51 & 84 & 95 & 88.42 \\
+  \hline
+  Bathol2 & 27 & 157 & 166 & 94.57 \\
+  \hline
+  Warnecke & 10 & 155 & 160 & 96.87 \\
+  \hline
+  Warnecke & 20 & 79 & 85 & 92.94 \\
+  \hline
+  Scholl & 50 & 1394 & 1506 & 92.56 \\
+  \hline
+  Scholl & 38 & 1834 & 1938 & 94.63 \\
+  \hline
+  Scholl & 25 & 2787 & 2862 & 97.37 \\
+  \hline
+  Wee-Mag & 20 & 77 & 81 & 95.06 \\
+  \hline
+  Wee-Mag & 30 & 56 & 57 & 98.24 \\
+  \hline
+ \end{tabular}
+\end{table}
+
+O grupo acredita que a ineficácia do algoritmo se deva a uma tendenciosidade do
+processo de construção de uma solução. Uma solução em que uma tarefa que denota
+muitas dependências fica designada para uma máquina $i$, tal que $i$ é muito
+próximo de $n$, acaba sendo bastante ruim. Nesses casos a busca local não
+conseguiu explorar o espaço de soluções e acabou com uma solução muito aquém
+do desejado.
 
 \section{Segunda Abordagem}
 
@@ -197,103 +251,28 @@ colocando todas tarefas pendentes na última máquina.
 
 \chapter{Resultados}
 
-Todos resultados foram obtidos utilizando como limite 10000 iterações.
-
-\begin{table}[htbp]
- \begin{tabular}{|c|c|c|c|c|}
-  \hline
-  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
-  \hline
-  Arcus2 & 27 & 5689 & 10161 & 55.98 \\ %1,2
-  \hline
-  Arcus2 & 9 & 16711 & 48429 & 34.50 \\ %1,2
-  \hline
-  Bathol2 & 51 & 84 & 97 & 86.59 \\ %1,2
-  \hline
-  Bathol2 & 27 & 157 & 735 & 21.36 \\ %1,0
-  \hline
-  Warnecke & 10 & 155 & 331 & 46.82 \\ %1,0
-  \hline
-  Warnecke & 20 & 79 & 212 & 37.26 \\ %1,0
-  \hline
-  Scholl & 50 & 1394 & 3701 & 37.66 \\ %1,2
-  \hline
-  Scholl & 38 & 1834 & 13997 & 13.10 \\ %1,0
-  \hline
-  Scholl & 25 & 2787 & 21287 & 13.09 \\ %1,2
-  \hline
-  Wee-Mag & 20 & 77 & 159 & 48.42 \\ %1,2
-  \hline
-  Wee-Mag & 30 & 56 & 108 & 51.85 \\ %1,2
-  \hline
- \end{tabular}
-\end{table}
-
-Média: 40.60
-
-
-Todos resultados foram obtidos utilizando como limite 100000 iterações.
-
-\begin{table}[htbp]
- \begin{tabular}{|c|c|c|c|c|}
-  \hline
-  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
-  \hline
-  Arcus2 & 27 & 5689 & 6125 & 92.88 \\
-  \hline
-  Arcus2 & 9 & 16711 & 16839 & 99.23 \\
-  \hline
-  Bathol2 & 51 & 84 & 95 & 88.42 \\
-  \hline
-  Bathol2 & 27 & 157 & 166 & 94.57 \\
-  \hline
-  Warnecke & 10 & 155 & 160 & 96.87 \\
-  \hline
-  Warnecke & 20 & 79 & 85 & 92.94 \\
-  \hline
-  Scholl & 50 & 1394 & 1506 & 92.56 \\
-  \hline
-  Scholl & 38 & 1834 & 1938 & 94.63 \\
-  \hline
-  Scholl & 25 & 2787 & 2862 & 97.37 \\
-  \hline
-  Wee-Mag & 20 & 77 & 81 & 95.06 \\
-  \hline
-  Wee-Mag & 30 & 56 & 57 & 98.24 \\
-  \hline
- \end{tabular}
-\end{table}
-
-Média: 94.79
-
 
 \chapter{Conclusão}
 
-Os resultados
-obtidos se mostraram bastante satisfatórios, tendo em média uma porcentagem de optimalidade de 94.79. O
-GRASP se mostrou uma heurística muito boa, não só pelos bons resultados, mas também pela facilidade em se
-trabalhar. 
+Os resultados obtidos usando a segunda abordagem se mostraram bastante
+satisfatórios, tendo em média uma porcentagem de optimalidade de 94.79. O
+GRASP se mostrou como uma heurística muito boa, não só pelos bons resultados,
+mas também pela facilidade em se
+trabalhar.
 
-De um modo geral, é bastante fácil entender e implementar o GRASP: os conceitos envolvidos são
-bastante simples e ele é composto apenas de duas funções principais (construção gulosa e busca local) e possui
-apenas um parâmetro para ser ajustado: o tamanho da lista restrita de candidatos. Porém, além disso existe uma
-dificuldade dependente do problema sendo tratado, que é formular uma vizinhança ou até mesmo pensar
-em um algoritmo guloso, e que possa ser randomizado, que gere a solução inicial viável.
+De fato, de um modo geral, é bastante fácil entender e implementar o GRASP:
+os conceitos envolvidos são bastante simples e ele é composto apenas de duas
+funções principais (construção gulosa e busca local), sendo a única
+dificuldade dependente do problemo sendo tratado, pois dependendo do mesmo,
+formular uma vizinhança ou até mesmo pensar
+em um algoritmo guloso que gere a solução inicial pode ser complicado.
 
-Ao final do trabalho podemos concluir que a nossa modelagem do problema com a heurística GRASP não se mostrou muito
-efetiva. Isto provavelmente se deve à pouca abragência da busca local e à geração de soluções iniciais
-que quando aleatoriezada tendia a criar soluções muito ruins.
 
 \thebibliography{9}
 
 \bibitem{salbp}
 	\url{http://www.assembly-line-balancing.de/index.php?content=classview&content2=classview&content3=classviewdlfree&content4=classview&classID=28&type=dl}
 	\emph{Homepage for Assembly Line Optimization Research (Assembly Line Balancing and Sequencing)}
-
-\bibitem{grasp}
-	\url{http://www.optimization-online.org/DB_FILE/2001/09/371.pdf}
-	\author{RESENDE, MAURICIO G.C. \and RIBEIRO, CELSO C.}
-	\title{Greedy Randomized Adaptative Search Procedures}
 
 \end{document}
 

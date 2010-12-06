@@ -1,5 +1,20 @@
 #!/usr/bin/ruby
 
+if ARGV.size < 1
+  puts 'Give me the name of the suite to run "top" or "naive"'
+  exit
+end
+
+soia = 1
+
+if ARGV[0] == 'top'
+  soia = 1
+elsif ARGV[0] == 'naive'
+  soia = 0
+else
+  exit
+end
+
 tests =
 "Arc111	27	5689
 Arc111	9	16839
@@ -14,13 +29,15 @@ Wee-Mag 	20 	77
 Wee-Mag 	30 	56
 "
 candidates = [0,25,50,75,100]
-randomic = [0,1,2,5,nil]
+randomic = [0,1,5,7,nil]
 
 tests.each_line do |t|
   t = t.split(/[\s\t]+/)
   candidates.each do |c|
-      puts "./bl #{t[1]} #{c} #{r} < data/#{t[0].upcase + ".IN2"}"
-      system "./bl #{t[1]} #{c} #{r} < data/#{t[0].upcase + ".IN2"}"
+    randomic.each do |r|
+      puts "./bl #{t[1]} #{c} #{soia} #{r} < data/#{t[0].upcase + ".IN2"}"
+      #system "./bl #{t[1]} #{c} #{soia} #{r} < data/#{t[0].upcase + ".IN2"}"
+    end
   end
 end
 

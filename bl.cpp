@@ -4,7 +4,6 @@
 #include <climits>
 #include <ctime>
 #include <algorithm>
-#include <unistd.h>
 #include <cassert>
 #include <cmath>
 
@@ -34,6 +33,7 @@ int alpha = 0;
 Candidate rcl[MAX_MACHINES];
 int numCandidates = 5;
 int seed = time(NULL);
+int isSoia;
 
 /*
     FUNCTIONS
@@ -65,19 +65,21 @@ void initRcl(int rclSize);
 int main(int argc, char**argv) {
 
     const char* message = "Missing arguments. Use it like this:\n\
-                           ./bl num_machines alpha [seed] [< input_file]\n";
-	if(argc < 3) {
+            ./bl num_machines alpha type [seed] [< input_file]\n";
+	if(argc < 4) {
 		puts(message);
 		exit(1);
 	}
-	if(argc > 4) {
+	if(argc > 5) {
 		puts(message);
 		exit(1);
 	}
 
 	m = atoi(argv[1]);
 	alpha = atoi(argv[2]);
-    seed = argc == 4 ? atoi(argv[3]) : 0;
+    isSoia = atoi(argv[3]);
+
+    seed = argc == 5 ? atoi(argv[4]) : time(NULL);
 
 	init();
 
@@ -85,9 +87,11 @@ int main(int argc, char**argv) {
 	//printInput();
 
 	for(int it = 0; it < MAX_ITERATIONS; it++) {
-        //greedyFialho();
-		//randomGreedy();
-		greedySoia();
+
+		if (isSoia)
+		    greedySoia();
+        else
+            randomGreedy();
 
    		localSearch();
 		updateSolution();
@@ -314,7 +318,7 @@ void localSearch() {
 		currentSolution = localCicle;
 
 		for(int k = 0; k < atribs[worstIndex][N_TASKS] && !improved; k++) {
-			
+
 			for(int i = 0; i < m && !improved; i++) {
 				int task = atribs[worstIndex][k];
 				// if we're not looking in the same machine and also if we can
@@ -329,18 +333,18 @@ void localSearch() {
 
 						atribs[i][N_TASKS]++;
 						atribs[i][LAST_TASK(i)] = task;
-						
+
 						for(int j = k+1; j < atribs[worstIndex][N_TASKS]; j++)
 							atribs[worstIndex][j-1] = atribs[worstIndex][j];
 						atribs[worstIndex][N_TASKS]--;
-						
+
 						//currentSolution = atribs[i][MACHINE_CICLE];
 						improved = true;
 					}
 				}
 			}
 		}
-		
+
 		currentSolution = longestCicle();
 	} while(improved);
 }
@@ -396,18 +400,20 @@ void topSort() {
 
 
 void readInput() {
-	scanf("%i,%i",&n,&m);
+	int read;
+
+	read = scanf("%i,%i",&n,&m);
 
 	for(int i = 0; i < n; i++)
-		scanf("%i", &costs[i]);
+		read = scanf("%i", &costs[i]);
 
 	int i,j;
-	scanf("%i,%i", &i, &j);
+	read = scanf("%i,%i", &i, &j);
 
 	while(i != -1 && j != -1) {
 		graph[i-1][j-1] = 1;
 		degree[j-1]++;
-		scanf("%i,%i", &i, &j);
+		read = scanf("%i,%i", &i, &j);
 	}
 }
 
