@@ -30,12 +30,15 @@ Wee-Mag 	30 	56
 "
 candidates = [0,25,50,75,100]
 
+i=0
 tests.each_line do |t|
   t = t.split(/[\s\t]+/)
   candidates.each do |c|
       puts "./bl #{t[1]} #{c} #{soia} < data/#{t[0].upcase + ".IN2"}"
-      system "echo `./bl #{t[1]} #{c} #{soia} < data/#{t[0].upcase + ".IN2"}` #{t[2]}"
+      system "echo `./bl #{t[1]} #{c} #{soia} 0 < data/#{t[0].upcase + ".IN2"}` #{t[2]}"
+      #system "`glpsol -m glpk/#{i} -o glpk/#{i}.sl`"
       puts '---'
+      i+= 1
   end
 end
 
