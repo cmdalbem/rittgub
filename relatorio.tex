@@ -46,9 +46,9 @@ GRASP é um acrônimo para \emph{Greedy Randomized Adaptive Search Procedure},
 cujo nome já especifica muito bem a sua filosofia. O objetivo é formular o
 programa com uma heurística gulosa, e o procedimento de resolução da
 meta-heurística randomizará cada passo com uma das soluções "mais gulosas".
-Para cada solução criada é feita uma Busca Local (Best Fit ou First Fit,
-dependendo da implementação), e o processo é repetido por um número
-pré-determinado de iterações.
+Para cada solução criada é feita uma Busca Local (\emph{best improvement} ou
+\emph{first improvement}, dependendo da implementação),
+e o processo é repetido por um número pré-determinado de iterações.
 
 Como objetivos adicionais do trabalho estão a formulação do problema como
 um problema de programação inteira/linear, e a execução das soluções
@@ -139,7 +139,7 @@ perfeitamente no modelo do GRASP,  a outra nem tanto.
 
 Para cada tarefa do vetor de tarefas o algoritmo tenta colocá-la, se
 isto respeitar o grafo de precedência, em alguma
-máquina (se for possível) de maneira que o maior ciclo entre todas as máquinas
+máquina de maneira que o maior ciclo entre todas as máquinas
 seja o menor possível. Cada um desses resultados (o valor de um maior ciclo)
 é colocado de maneira ordenada em uma Restricted Candidate List (\emph{RCL})
 de tamanho $n$ de tal sorte que se for adicionado um elemento quando ela estiver
@@ -157,14 +157,14 @@ O objetivo da busca local é ``caminhar'' na
 vizinhança da solução, tentando sempre melhorá-la, até não conseguir mais.
 Nossa vizinhança é: sabendo que a máquina $m*$
 é a máquina que determina o \emph{tempo de ciclo},
-tentamos retirar uma das tarefas $t*$ atribuida à essa máquina e, para cada
+tentamos retirar uma das tarefas $t*$ atribuida a essa máquina e, para cada
 outra máquina $m$, se for possível atribuir $t*$ à $m$, isto é feito.
 Utilizamos \textit{first improvement} na nossa busca
 local, fazendo com que o primero vizinho que melhore a solução seja
 escolhido como próxima solução.
 
-Há, porém, o problema de existirem mais que uma máquinas $m*$,
-definidoras do \emph{tempo de ciclo}. Tendo isto em vista,
+Há, porém, o problema de existir mais que uma máquina $m*$,
+definidora do \emph{tempo de ciclo}. Tendo isto em vista,
 durante a busca local, é considerado que o vizinho melhorou a
 solução se o \emph{tempo de ciclo} daquele vizinho for
 menor ou se o \emph{tempo de ciclo} do vizinho for igual mas a
@@ -219,8 +219,6 @@ do desejado.
 
 \section{Segunda Abordagem}
 
-\subsection{Construção Gulosa Randomizada}
-
 Visando melhorar os resultados o grupo pensou em uma segunda abordagem para a
 etapa de construção gulosa e esta, talvez devido à natureza do problema,
 de longe se mostrou  mais bem sucedida, em termos de
@@ -254,6 +252,8 @@ Em resumo, o que ele faz é tentar aproximar a \emph{carga} de
 cada máquina do limite inferior calculado.
 Como isso não garante a atribuição de todas tarefas, isso é forçado, no fim,
 colocando todas tarefas pendentes na última máquina.
+
+A etapa de busca local permanece igual à anterior.
 
 \chapter{Resultados}
 
