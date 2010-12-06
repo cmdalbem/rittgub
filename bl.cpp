@@ -8,7 +8,7 @@
 #include <cassert>
 #include <cmath>
 
-#define MAX_ITERATIONS 10000
+#define MAX_ITERATIONS 100000
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
