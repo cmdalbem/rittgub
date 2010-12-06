@@ -29,15 +29,13 @@ Wee-Mag 	20 	77
 Wee-Mag 	30 	56
 "
 candidates = [0,25,50,75,100]
-randomic = [0,1,5,7,nil]
 
 tests.each_line do |t|
   t = t.split(/[\s\t]+/)
   candidates.each do |c|
-    randomic.each do |r|
-      puts "./bl #{t[1]} #{c} #{soia} #{r} < data/#{t[0].upcase + ".IN2"}"
-      #system "./bl #{t[1]} #{c} #{soia} #{r} < data/#{t[0].upcase + ".IN2"}"
-    end
+      puts "./bl #{t[1]} #{c} #{soia} < data/#{t[0].upcase + ".IN2"}"
+      system "echo `./bl #{t[1]} #{c} #{soia} < data/#{t[0].upcase + ".IN2"}` #{t[2]}"
+      puts '---'
   end
 end
 
