@@ -4,7 +4,7 @@
 #include <ctime>
 #include <algorithm>
 
-#define MAX_ITERATIONS 1
+#define MAX_ITERATIONS 10000
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
@@ -67,22 +67,22 @@ int main(int argc, char**argv) {
 	init();
 
 	readInput();
-	printInput();
+	//printInput();
 
 	for(int it = 0; it < MAX_ITERATIONS; it++) {
-        greedyFialho();
+        //greedyFialho();
 		//randomGreedy();
-		//greedySoia();
+		greedySoia();
 
    		localSearch();
-		//updateSolution();
-        printAtribs();
+		updateSolution();
+        //printAtribs();
 
 	}
 
-	int localCicle = longestCicle();
+	//int localCicle = longestCicle();
 
-	printf("Menor tempo de cicle: %i\n", localCicle);
+	printf("Menor tempo de cicle: %i\n", cicle);
 }
 
 int longestCicle() {
@@ -105,7 +105,7 @@ int canDelegate(int task, int machine) {
             can = 0;
             //search in each machine that comes before it
             for (int j = 0; j <= machine; j++) {
-                 for (int k=0; k < atribs[j][MAX_TASKS-1]; k++) {
+                 for (int k=0; k < atribs[j][N_TASKS]; k++) {
                     can = can || atribs[j][k] == i;
                   }
             }
@@ -140,7 +140,7 @@ void greedySoia() {
 
 
 	minPossibleCicle = std::max(highestCost, (int)(totalCost / m));
-	printf("minPossibleCicle: %d\n", minPossibleCicle);
+	//printf("minPossibleCicle: %d\n", minPossibleCicle);
 	int currentTask = 0;
 
 	for(int i = 0; i < m; i++) {
@@ -209,7 +209,7 @@ void randomGreedy() {
                     index = j;
                 }
             } else {
-                printf("Couldnt delegate\n");
+                //printf("Couldnt delegate\n");
             }
 
 		}
@@ -226,7 +226,7 @@ void localSearch() {
 	bool improved;
 
 	do {
-	    printf(".");
+	    //printf(".");
 		improved = false;
 		localCicle = 0;
 
@@ -243,7 +243,7 @@ void localSearch() {
 		for(int i = 0; i < m; i++) {
 		    // if we're not looking in the same machine and also if we can
 		    // delegate the last task of the worst machine to this new one
-			if(i != worstIndex && canDelegate(atribs[worstIndex][N_TASKS-1] , i) ) {
+			if(i != worstIndex && canDelegate(atribs[worstIndex][LAST_TASK(worstIndex)] , i) ) {
 			    int cost = costs[ atribs[worstIndex][LAST_TASK(worstIndex)] ];
 
 				if(atribs[i][MACHINE_CICLE] + cost < atribs[worstIndex][MACHINE_CICLE]) {
@@ -251,8 +251,8 @@ void localSearch() {
 					atribs[i][MACHINE_CICLE] += cost;
 					atribs[worstIndex][MACHINE_CICLE] -= cost;
 
-					atribs[i][N_TASKS] = atribs[worstIndex][N_TASKS-1];
 					atribs[i][N_TASKS]++;
+					atribs[i][LAST_TASK(i)] = atribs[worstIndex][LAST_TASK(worstIndex)];
 					atribs[worstIndex][N_TASKS]--;
 					currentSolution = atribs[i][MACHINE_CICLE];
 					improved = true;
