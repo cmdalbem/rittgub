@@ -46,9 +46,9 @@ GRASP é um acrônimo para \emph{Greedy Randomized Adaptive Search Procedure},
 cujo nome já especifica muito bem a sua filosofia. O objetivo é formular o
 programa com uma heurística gulosa, e o procedimento de resolução da
 meta-heurística randomizará cada passo com uma das soluções "mais gulosas".
-Para cada solução criada é feita uma Busca Local (Best Fit ou First Fit,
-dependendo da implementação), e o processo é repetido por um número
-pré-determinado de iterações.
+Para cada solução criada é feita uma Busca Local (\emph{best improvement} ou
+\emph{first improvement}, dependendo da implementação),
+e o processo é repetido por um número pré-determinado de iterações.
 
 Como objetivos adicionais do trabalho estão a formulação do problema como
 um problema de programação inteira/linear, e a execução das soluções
@@ -139,7 +139,7 @@ perfeitamente no modelo do GRASP,  a outra nem tanto.
 
 Para cada tarefa do vetor de tarefas o algoritmo tenta colocá-la, se
 isto respeitar o grafo de precedência, em alguma
-máquina (se for possível) de maneira que o maior ciclo entre todas as máquinas
+máquina de maneira que o maior ciclo entre todas as máquinas
 seja o menor possível. Cada um desses resultados (o valor de um maior ciclo)
 é colocado de maneira ordenada em uma Restricted Candidate List (\emph{RCL})
 de tamanho $n$ de tal sorte que se for adicionado um elemento quando ela estiver
@@ -157,28 +157,28 @@ O objetivo da busca local é ``caminhar'' na
 vizinhança da solução, tentando sempre melhorá-la, até não conseguir mais.
 Nossa vizinhança é: sabendo que a máquina $m*$
 é a máquina que determina o \emph{tempo de ciclo},
-retiramos a última tarefa t* atribuida à essa máquina e, para cada
-outra máquina m, se for possível atribuir t* à m, isto é feito.
+tentamos retirar uma das tarefas $t*$ atribuida a essa máquina e, para cada
+outra máquina $m$, se for possível atribuir $t*$ à $m$, isto é feito.
 Utilizamos \textit{first improvement} na nossa busca
-local, fazedo com que o primero vizinho que melhore a solução seja
+local, fazendo com que o primero vizinho que melhore a solução seja
 escolhido como próxima solução.
 
-Há, porém, o problema de existirem mais que uma máquinas $m*$,
-definidoras do \emph{tempo de ciclo}. Tendo isto em vista,
+Há, porém, o problema de existir mais que uma máquina $m*$,
+definidora do \emph{tempo de ciclo}. Tendo isto em vista,
 durante a busca local, é considerado que o vizinho melhorou a
 solução se o \emph{tempo de ciclo} daquele vizinho for
-menor ou se o \emph{tempo de ciclo} do vizinho por igual mas a
-quantidade de máquinas m*, que definem este tempo, for
-menor. Isto evita que a busca local entre em loop, mas não impede que
+menor ou se o \emph{tempo de ciclo} do vizinho for igual mas a
+quantidade de máquinas $m*$, que definem este tempo, for
+menor. Isto evita que a busca local entre em \emph{loop}, mas não impede que
 eventualmente ela melhore as \emph{cargas} de
-todas máquinas m*, melhorando o \emph{tempo de ciclo} global.
+todas máquinas $m*$, melhorando o \emph{tempo de ciclo} global.
 
 \subsection{Resultados e Limitações}
 
 Esta abordagem, principalmente a etapa de construção gulosa, não se mostrou muito
 efetiva e os resultados deixaram a desejar. A seguir uma lista com os resultados:
 
-Todos resultados foram obtidos utilizando como limite 100000 iterações.
+Todos resultados foram obtidos utilizando como limite 10000 iterações.
 
 \begin{table}[htbp]
  \begin{tabular}{|c|c|c|c|c|}
@@ -219,38 +219,45 @@ do desejado.
 
 \section{Segunda Abordagem}
 
-\subsection{Construção Gulosa Randomizada}
-
-Não consideramos esta outra abordagem muito condizente com aquilo que estudamos
-sobre GRASP.
-Mas devido à natureza do
-problema, de longe se mostrou  mais eficiente, ambos em termos de
+Visando melhorar os resultados o grupo pensou em uma segunda abordagem para a
+etapa de construção gulosa e esta, talvez devido à natureza do problema,
+de longe se mostrou  mais bem sucedida, em termos de
 eficiência computacional (neste caso medindo
-somente tempo de execução) como eficiência na qualidade da resposta.
+somente tempo de execução) e qualidade da resposta.
 
 Primeiramente as tarefas são ordenadas topologicamente.
 Um problema aqui é que a ordenação é deterministica e gera
-sempre o mesmo resultado, e isso é indesejado.
-Por isso, sempre que temos mais de uma tarefa possível para ir na
-posição $i$ do vetor ordenado, escolhemos randomicamente entre todas,
-com isso geramos ordenações topologicas
-potencialmente diferentes para cada iteração.
+sempre o mesmo resultado, e isso é indesejado. Por isso, sempre que temos mais
+de uma tarefa possível para ir na
+posição $i$ do vetor ordenado, escolhemos randomicamente entre todas.
 
-Após, tendo o vetor ordenado, calculamos qual um limite inferior para a
-resposta. Isto é feito pegando o valor máximo entre $\frac{\sum_{i\in T}t_i}{m}$ e $max_{i\in T}t_i$. Sendo o primeiro
-o valor da distribuição mais uniforme possível, ou seja, soma dos custos de todas tarefas e dividido pelo
-número de máquinas. E sendo o segundo o custo da tarefa mais custosa.
+Tendo o vetor ordenado, calculamos um limite inferior para a
+resposta. Isto é feito pegando o valor máximo entre $\frac{\sum_{i\in T}t_i}{m}$
+ e $max_{i\in T}t_i$. Sendo o primeiro
+o valor da distribuição mais uniforme possível, ou seja,
+soma dos custos de todas tarefas e dividido pelo
+número de máquinas e o segundo o custo da tarefa mais custosa.
 
-Sabendo esse limite inferior, o que é feito é: para cada máquina, eu vou colocando nela as tarefas retiradas, em ordem,
-do vetor ordenado topologicamente. Isto é feito enquanto a \emph{carga} da máquina for menor que o limite inferior
-calculado. Quando este valor for extrapolado, então é feita a decisão se iremos colocar esta tarefa à mais
-(extrapolando o limiar) ou se vamos manter como está (ficando abaixo do limiar). Sempre é tomada a decisão que mais
-aproxima a \emph{carga} da máquina do limiar calculado. Resumindo, o que ele faz é tentar aproximar a \emph{carga} de
-cada máquina do limite inferior calculado. Como isso não garante a atribuição de todas tarefas, isso é forçado, no fim,
+Sabendo esse limite inferior, procedemos: para cada máquina, coloca-se
+nela uma das tarefas que em ordem topológica pode ser atribuída.
+Isto é feito enquanto a \emph{carga}
+da máquina for menor que o limite inferior
+calculado. Quando este valor for extrapolado, é preciso decidir se iremos
+adicionar esta tarefa a mais
+(extrapolando o limiar) ou se vamos manter como está (ficando abaixo do limiar).
+Sempre é tomada a decisão que mais
+aproxima a \emph{carga} da máquina do limiar calculado.
+
+Em resumo, o que ele faz é tentar aproximar a \emph{carga} de
+cada máquina do limite inferior calculado.
+Como isso não garante a atribuição de todas tarefas, isso é forçado, no fim,
 colocando todas tarefas pendentes na última máquina.
+
+A etapa de busca local permanece igual à anterior.
 
 \chapter{Resultados}
 
+botar tabela
 
 \chapter{Conclusão}
 
@@ -262,11 +269,10 @@ trabalhar.
 
 De fato, de um modo geral, é bastante fácil entender e implementar o GRASP:
 os conceitos envolvidos são bastante simples e ele é composto apenas de duas
-funções principais (construção gulosa e busca local), sendo a única
-dificuldade dependente do problemo sendo tratado, pois dependendo do mesmo,
-formular uma vizinhança ou até mesmo pensar
-em um algoritmo guloso que gere a solução inicial pode ser complicado.
-
+funções principais (construção gulosa e busca local) além de um parâmetro
+ajustável de randomicidade. A dificuldade  que o grupo teve foi a parte
+dependente do problema sendo tratado, foi difícil formular uma vizinhança e
+pensar em um algoritmo guloso que gerasse uma solução inicial válida.
 
 \thebibliography{9}
 
