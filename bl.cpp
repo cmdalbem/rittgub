@@ -1,8 +1,10 @@
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <climits>
 #include <ctime>
 #include <algorithm>
+#include <unistd.h>
 
 #define MAX_ITERATIONS 10000
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
@@ -11,13 +13,18 @@
 #define N_TASKS  MAX_TASKS - 1
 #define MACHINE_CICLE MAX_TASKS - 2
 
+typedef struct _candidate {
+    int value;
+    int index;
+}Candidate;
+
 int graph[MAX_TASKS][MAX_TASKS];
 int costs[MAX_TASKS];
 int n, m, currentSolution, cicle;
 int atribs[MAX_MACHINES][MAX_TASKS];
 int degree[MAX_TASKS], topSorted[MAX_TASKS];
 
-int rcl[MAX_TASKS];
+Candidate rcl[MAX_TASKS];
 
 float randomization = 1;
 
@@ -36,6 +43,32 @@ void greedyFialho();
 
 int longestCicle();
 int canDelegate(int task,int machine);
+
+void insertRcl(Candidate c, int rclSize);
+void printRcl(int rclSize);
+void initRcl(int rclSize);
+
+//void amain() {
+
+//    int rclSize = n * randomization;
+//    initRcl(rclSize);
+
+//    Candidate c1 = {1,0}, c2 = {2,1} , c3 = {0,3}, c4 = {-1,4} ,c5 = {10,5}, c6 = {3,6};
+//    insertRcl(c1,rclSize);
+//        printRcl(rclSize);
+//    insertRcl(c2,rclSize);
+//        printRcl(rclSize);
+//    insertRcl(c3,rclSize);
+//            printRcl(rclSize);
+//    insertRcl(c4,rclSize);
+//            printRcl(rclSize);
+//    insertRcl(c5,rclSize);
+//    printRcl(rclSize);
+//      insertRcl(c6,rclSize);
+
+//    //insertRcl(c4,rclSize);
+//    printRcl(rclSize);
+//}
 
 //int amain() {
 
@@ -67,12 +100,12 @@ int main(int argc, char**argv) {
 	init();
 
 	readInput();
-	//printInput();
+	printInput();
 
 	for(int it = 0; it < MAX_ITERATIONS; it++) {
         //greedyFialho();
-		//randomGreedy();
-		greedySoia();
+		randomGreedy();
+		//greedySoia();
 
    		localSearch();
 		updateSolution();
@@ -102,13 +135,14 @@ int canDelegate(int task, int machine) {
 
     for (int i=0; i < n; i++) {
         if (graph[i][task]) {
-            can = 0;
+            int taskCan = 0;
             //search in each machine that comes before it
             for (int j = 0; j <= machine; j++) {
                  for (int k=0; k < atribs[j][N_TASKS]; k++) {
-                    can = can || atribs[j][k] == i;
+                    taskCan = taskCan || atribs[j][k] == i;
                   }
             }
+            can = can && taskCan;
         }
      }
 
@@ -168,11 +202,43 @@ void greedySoia() {
 	}
 }
 
+void insertRcl(Candidate c, int rclSize) {
+
+    bool inserted = 0;
+
+    for (int i=0; i < rclSize && !inserted ; i++) {
+        if ( c.value <= rcl[i].value ) {
+            // shifts everyone to the front
+            memmove( rcl+i+1, rcl+i , (rclSize - i)*sizeof(int) );
+            rcl[i] = c;
+            inserted = 1;
+        }
+    }
+
+}
+
+void initRcl(int rclSize) {
+
+    for( int i=0; i < rclSize; i++) {
+        rcl[i].value = INT_MAX;
+    }
+
+}
+
+void printRcl(int rclSize) {
+
+    for (int i = 0; i < rclSize; i++) {
+        printf("[%d]\n",rcl[i].value);
+    }
+
+}
 
 void randomGreedy() {
 
     int rclSize = n * randomization;
+    initRcl(rclSize);
 
+    //clean atributions
 	for(int i = 0; i < MAX_TASKS; i++) {
 		for(int j = 0; j < MAX_MACHINES; j++)
 			atribs[j][i] = 0;
@@ -181,12 +247,12 @@ void randomGreedy() {
 	for(int i = 0; i < n; i++) {
 
         int task = i;
-	    int best_bet = INT_MAX;
-	    int index = -1;
 
 		for(int j = 0; j < m; j++) {
 
             if ( canDelegate( task , j ) ) {
+
+                printRcl(rclSize);
 
                 int new_cicle = atribs[j][MACHINE_CICLE] + costs[task];
                 int localCicle = 0;
@@ -195,6 +261,7 @@ void randomGreedy() {
                 for(int k = 0; k < m; k++) {
 
                     int current_cicle = atribs[k][MACHINE_CICLE];
+
                     if (k == j) {
                         current_cicle = new_cicle;
                     }
@@ -204,15 +271,18 @@ void randomGreedy() {
 	                }
                 }
 
-                if (localCicle < best_bet) {
-                    best_bet = localCicle;
-                    index = j;
-                }
+                Candidate local = { localCicle, j };
+                insertRcl(local,rclSize);
+
             } else {
-                //printf("Couldnt delegate\n");
+                printf("Couldnt delegate\n");
             }
 
 		}
+
+        int index = rcl[i].index;
+        printf("rclSize: %d\n",rclSize);
+        exit(1);
 
         atribs[index][N_TASKS]++;
         atribs[index][LAST_TASK(index)] = task;
