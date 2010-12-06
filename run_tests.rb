@@ -12,15 +12,12 @@ Wee-Mag 	20 	77
 Wee-Mag 	30 	56"
 
 candidates = [1,2,3,4,5]
-randomic = [0,1,2]
 
 tests.each_line do |t|
   t = t.split(/[\s\t]+/)
   candidates.each do |c|
-    randomic.each do |r|
       puts "./bl #{t[1]} #{c} #{r} < data/#{t[0].upcase + ".IN2"}"
       system "./bl #{t[1]} #{c} #{r} < data/#{t[0].upcase + ".IN2"}"
-    end
   end
 end
 

@@ -116,16 +116,73 @@ end;
 
 \chapter{GRASP}
 
-\section{Solução Incial: Construção Gulosa Randomizada}
+O grupo tentou duas abordagens para a resolver o problema. Uma delas se encaixa
+perfeitamente no modelo do GRASP,  a outra nem tanto.
 
-Não consideramos nossa abordagem muito condizente com aquilo que estudamos sobre GRASP. Mas devido à natureza do
-problema, de longe pareceu a abordagem mais eficiente, ambos em termos de eficiência computacional (neste caso medindo
+\section{Primeira Abordagem}
+
+\subsection{Construção Gulosa Randomizada}
+
+Para cada tarefa do vetor de tarefas o algoritmo tenta colocá-la, se
+isto respeitar o grafo de precedência, em alguma
+máquina (se for possível) de maneira que o maior ciclo entre todas as máquinas
+seja o menor possível. Cada um desses resultados (o valor de um maior ciclo)
+é colocado de maneira ordenada em uma Restricted Candidate List (\emph{RCL})
+de tamanho $n$ de tal sorte que se for adicionado um elemento quando ela estiver
+cheia o último seja descartado. Após construir a \emph{RCL} retiramos um dos
+elementos de maneira aleatória e esta será a máquina na qual deveremos inserir
+a tarefa atual.
+
+O processo é repetido para cada uma das tarefas e no quando ele acaba teremos
+uma atribuição de tarefas $i$ para cada uma das $j$ máquinas.
+
+\subsection{Limitações}
+
+Xinagar
+
+\section{Busca Local}
+
+Após gerada a solução incial, o algoritmo parte para a busca local.
+O objetivo da busca local é ``caminhar'' na
+vizinhança da solução, tentando sempre melhorá-la, até não conseguir mais.
+Nossa vizinhança é: sabendo que a máquina $m*$
+é a máquina que determina o \emph{tempo de ciclo},
+retiramos a última tarefa t* atribuida à essa máquina e, para cada
+outra máquina m, se for possível atribuir t* à m, isto é feito.
+Utilizamos \textit{first improvement} na nossa busca
+local, fazedo com que o primero vizinho que melhore a solução seja
+escolhido como próxima solução.
+
+Há, porém, o problema de existirem mais que uma máquinas $m*$,
+definidoras do \emph{tempo de ciclo}. Tendo isto em vista,
+durante a busca local, é considerado que o vizinho melhorou a
+solução se o \emph{tempo de ciclo} daquele vizinho for
+menor ou se o \emph{tempo de ciclo} do vizinho por igual mas a
+quantidade de máquinas m*, que definem este tempo, for
+menor. Isto evita que a busca local entre em loop, mas não impede que
+eventualmente ela melhore as \emph{cargas} de
+todas máquinas m*, melhorando o \emph{tempo de ciclo} global.
+
+\section{Segunda Abordagem}
+
+\subsection{Construção Gulosa Randomizada}
+
+Não consideramos esta outra abordagem muito condizente com aquilo que estudamos
+sobre GRASP.
+Mas devido à natureza do
+problema, de longe se mostrou  mais eficiente, ambos em termos de
+eficiência computacional (neste caso medindo
 somente tempo de execução) como eficiência na qualidade da resposta.
 
-Primeiramente as tarefas são ordenadas topologicamente. Um problema aqui é que a ordenação é deterministica e gera
-sempre o mesmo resultado, e isso é indesejado. Por isso, sempre que temos mais de uma tarefa possível para ir na
-posição $i$ do vetor ordenado, escolhemos randomicamente entre todas, com isso geramos ordenações topologicas
-potencialmente diferentes para cada iteração. Após, tendo o vetor ordenado, calculamos qual um limite inferior para a
+Primeiramente as tarefas são ordenadas topologicamente.
+Um problema aqui é que a ordenação é deterministica e gera
+sempre o mesmo resultado, e isso é indesejado.
+Por isso, sempre que temos mais de uma tarefa possível para ir na
+posição $i$ do vetor ordenado, escolhemos randomicamente entre todas,
+com isso geramos ordenações topologicas
+potencialmente diferentes para cada iteração.
+
+Após, tendo o vetor ordenado, calculamos qual um limite inferior para a
 resposta. Isto é feito pegando o valor máximo entre $\frac{\sum_{i\in T}t_i}{m}$ e $max_{i\in T}t_i$. Sendo o primeiro
 o valor da distribuição mais uniforme possível, ou seja, soma dos custos de todas tarefas e dividido pelo
 número de máquinas. E sendo o segundo o custo da tarefa mais custosa.
@@ -137,20 +194,6 @@ calculado. Quando este valor for extrapolado, então é feita a decisão se irem
 aproxima a \emph{carga} da máquina do limiar calculado. Resumindo, o que ele faz é tentar aproximar a \emph{carga} de
 cada máquina do limite inferior calculado. Como isso não garante a atribuição de todas tarefas, isso é forçado, no fim,
 colocando todas tarefas pendentes na última máquina.
-
-\section{Busca Local}
-
-Após gerada a solução incial, o algoritmo parte para a busca local. O objetivo da busca local é ``caminhar'' na
-vizinhança da solução, tentando sempre melhorá-la, até não conseguir mais. Nossa vizinhança é: sabendo que a máquina m*
-é a máquina que determina o \emph{tempo de ciclo}, retiramos a última tarefa t* atribuida à essa máquina e, para cada
-outra máquina m, se for possível atribuir t* à m, isto é feito. Utilizamos \textit{first improvement} na nossa busca
-local, fazedo com que o primero vizinho que melhore a solução seja escolhido como próxima solução.
-
-Há, porém, o problema de existirem mais que uma máquinas m*, definidoras do \emph{tempo de ciclo}. Tendo isto em vista,
-durante a busca local, é considerado que o vizinho melhorou a solução se o \emph{tempo de ciclo} daquele vizinho for
-menor ou se o \emph{tempo de ciclo} do vizinho por igual mas a quantidade de máquinas m*, que definem este tempo, for
-menor. Isto evita que a busca local entre em loop, mas não impede que eventualmente ela melhore as \emph{cargas} de
-todas máquinas m*, melhorando o \emph{tempo de ciclo} global.
 
 \chapter{Resultados}
 
@@ -197,3 +240,4 @@ Todos resultados foram obtidos utilizando como limite 100000 iterações.
 	\emph{Homepage for Assembly Line Optimization Research (Assembly Line Balancing and Sequencing)}
 
 \end{document}
+
