@@ -313,25 +313,35 @@ void localSearch() {
 
 		currentSolution = localCicle;
 
-		for(int i = 0; i < m; i++) {
-		    // if we're not looking in the same machine and also if we can
-		    // delegate the last task of the worst machine to this new one
-			if(i != worstIndex && canDelegate(atribs[worstIndex][LAST_TASK(worstIndex)] , i) ) {
-			    int cost = costs[ atribs[worstIndex][LAST_TASK(worstIndex)] ];
+		for(int k = 0; k < atribs[worstIndex][N_TASKS] && !improved; k++) {
+			
+			for(int i = 0; i < m && !improved; i++) {
+				int task = atribs[worstIndex][k];
+				// if we're not looking in the same machine and also if we can
+				// delegate the last task of the worst machine to this new one
+				if(i != worstIndex && canDelegate(task, i) ) {
+					int cost = costs[ task ];
 
-				if(atribs[i][MACHINE_CICLE] + cost < atribs[worstIndex][MACHINE_CICLE]) {
-					// GET CICLES RIGHT
-					atribs[i][MACHINE_CICLE] += cost;
-					atribs[worstIndex][MACHINE_CICLE] -= cost;
+					if(atribs[i][MACHINE_CICLE] + cost < atribs[worstIndex][MACHINE_CICLE]) {
+						// GET CICLES RIGHT
+						atribs[i][MACHINE_CICLE] += cost;
+						atribs[worstIndex][MACHINE_CICLE] -= cost;
 
-					atribs[i][N_TASKS]++;
-					atribs[i][LAST_TASK(i)] = atribs[worstIndex][LAST_TASK(worstIndex)];
-					atribs[worstIndex][N_TASKS]--;
-					currentSolution = atribs[i][MACHINE_CICLE];
-					improved = true;
+						atribs[i][N_TASKS]++;
+						atribs[i][LAST_TASK(i)] = task;
+						
+						for(int j = k+1; j < atribs[worstIndex][N_TASKS]; j++)
+							atribs[worstIndex][j-1] = atribs[worstIndex][j];
+						atribs[worstIndex][N_TASKS]--;
+						
+						//currentSolution = atribs[i][MACHINE_CICLE];
+						improved = true;
+					}
 				}
 			}
 		}
+		
+		currentSolution = longestCicle();
 	} while(improved);
 }
 
