@@ -1,0 +1,35 @@
+% Relatório do Ritt
+% Cristiano Medeiros Dalbem
+ Fábio Fontoura Beltrão
+ Lucas Fialho Zawacki
+
+# Problema
+
+Estaremos desenvolvendo uma solução para o problema de Balanceamento de Linhas
+de Produção utilizando a heurística GRASP.
+
+# Abordagem
+
+## Construção Gulosa
+
+A construção gulosa inicia ordenando a lista de tarefas utilizando Ordenação
+Topológica de tal sorte que seja respeitada a ordem de precedência para o
+caso de uma execução sequencial (se fossem postas todas na mesma máquina).
+
+Para o caso da ordem de precedência durante a execução, em máquinas diferentes,
+deve ser levado em conta um tempo de espera. Esta é representada e nossa
+implementação como uma "tarefa fantasma" na lista de tarefas da máquina, cujo
+custo é o tempo em que a máquina ficará ociosa.
+
+Começa-se com uma solução vazia, ou seja, todas máquina sem tarefas. Para cada
+tarefa, insira-a em uma máquina de forma que o ciclo final dessa solução parcial
+seja minimizado.
+
+## Busca Local
+
+Será feita com First Fit, construindo a vizinhança da seguinte maneira:
+
+    Seja m* a máquina de maior ciclo
+    Para toda máquina m diferente de m*
+        Desloca a última tarefa atribuída a m* para m
+

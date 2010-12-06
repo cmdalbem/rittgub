@@ -1,0 +1,69 @@
+\documentclass{report}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[num]{abntcite} % Carregamos o pacote abntcite com a opção alf, ou seja, citações alfanuméricas
+\usepackage{listings}
+\usepackage{url}
+%\RequirePackage[colorlinks=false,hyperindex,plainpages=false]{hyperref}
+
+
+\lstset{language=C,
+	extendedchars=true,
+	inputencoding=utf8,
+	showstringspaces=false,
+	tabsize=2,
+	texcl=true,
+	basicstyle=\scriptsize,
+	escapechar={\@},
+	breaklines=true
+}
+
+
+\author{Cristiano Medeiros Dalbem \and Fábio da Fontoura Beltrão \and Lucas Fialho Zawacki}
+\title{GRASP Aplicado ao Problema de Balanceamento de Linhas de Produção}
+%\date{}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\chapter{Introdução}
+
+\chapter{Definição do Problema}
+
+Tirada diretamente da definição do trabalho.
+
+Uma linha de produção consiste em uma série de estações de trabalho. Dado um conjunto de tarefas com restrições de
+precedência, temos que atribuir as tarefas às estações, tal que a precedência é respeitada. Cada tarefa possui um tempo
+de execução. O tempo total das tarefas de uma estação define a sua \emph{carga}, e a carga máxima entre todas as
+estações define o \emph{tempo de ciclo}. Formalmente
+
+\begin{description}
+ \item [Instância] Um grafo G = (T,P) direcionado acíclico sobre um conjunto de tarefas T, o tempo de execução $t_i$ de
+cada tarefa $i \in T$, e um número $m$ de estações de trabalho.
+
+ \item [Solução] Uma atribuição $s : T \rightarrow [m]$ das tarefas às estações que satisfaz as restrições de
+precedência, i.e. para cada $tu \in P$, $s(t) \leq s(u)$.
+
+ \item [Objetivo] Minimizar o tempo de ciclo  $max_{i\in[m]}\sum_{j\in T\mid s(t)=i}t_j$.
+\end{description}
+
+
+
+
+\chapter{GRASP}
+
+\section{Solução Incial: Construção Gulosa Randomizada}
+
+Não consideramos nossa abordagem muito condizente com aquilo que estudamos sobre GRASP. Mas devido à natureza do
+problema, de longe pareceu a abordagem mais eficiente, ambos em termos de eficiência computacional (neste caso medindo
+somente tempo de execução) como eficiência na qualidade da resposta.
+
+\section{Busca Local}
+
+\chapter{Resultados}
+
+\chapter{Conclusão}
+
+\end{document}
