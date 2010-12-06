@@ -257,21 +257,21 @@ void randomGreedy() {
                 int new_cicle = atribs[j][MACHINE_CICLE] + costs[task];
                 int localCicle = 0;
 
-                // calculates the longest cicle between all machines
-                for(int k = 0; k < m; k++) {
+//                // calculates the longest cicle between all machines
+//                for(int k = 0; k < m; k++) {
 
-                    int current_cicle = atribs[k][MACHINE_CICLE];
+//                    int current_cicle = atribs[k][MACHINE_CICLE];
 
-                    if (k == j) {
-                        current_cicle = new_cicle;
-                    }
+//                    if (k == j) {
+//                        current_cicle = new_cicle;
+//                    }
 
-	                if( current_cicle > localCicle) {
-		                localCicle = current_cicle;
-	                }
-                }
+//	                if( current_cicle > localCicle) {
+//		                localCicle = current_cicle;
+//	                }
+//                }
 
-                Candidate local = { localCicle, j };
+                Candidate local = { new_cicle, j };
                 insertRcl(local,rclSize);
 
             } else {
