@@ -1,0 +1,165 @@
+./bl 27 0 1 < data/ARC111.IN2
+7096 5689
+---
+./bl 27 25 1 < data/ARC111.IN2
+6125 5689
+---
+./bl 27 50 1 < data/ARC111.IN2
+6125 5689
+---
+./bl 27 75 1 < data/ARC111.IN2
+5835 5689
+---
+./bl 27 100 1 < data/ARC111.IN2
+5903 5689
+---
+./bl 9 0 1 < data/ARC111.IN2
+17037 16839
+---
+./bl 9 25 1 < data/ARC111.IN2
+16748 16839
+---
+./bl 9 50 1 < data/ARC111.IN2
+16724 16839
+---
+./bl 9 75 1 < data/ARC111.IN2
+16724 16839
+---
+./bl 9 100 1 < data/ARC111.IN2
+16725 16839
+---
+./bl 51 0 1 < data/BARTHOL2.IN2
+157 84
+---
+./bl 51 25 1 < data/BARTHOL2.IN2
+91 84
+---
+./bl 51 50 1 < data/BARTHOL2.IN2
+90 84
+---
+./bl 51 75 1 < data/BARTHOL2.IN2
+90 84
+---
+./bl 51 100 1 < data/BARTHOL2.IN2
+89 84
+---
+./bl 27 0 1 < data/BARTHOL2.IN2
+165 157
+---
+./bl 27 25 1 < data/BARTHOL2.IN2
+160 157
+---
+./bl 27 50 1 < data/BARTHOL2.IN2
+160 157
+---
+./bl 27 75 1 < data/BARTHOL2.IN2
+161 157
+---
+./bl 27 100 1 < data/BARTHOL2.IN2
+161 157
+---
+./bl 10 0 1 < data/WARNECKE.IN2
+166 155
+---
+./bl 10 25 1 < data/WARNECKE.IN2
+160 155
+---
+./bl 10 50 1 < data/WARNECKE.IN2
+160 155
+---
+./bl 10 75 1 < data/WARNECKE.IN2
+159 155
+---
+./bl 10 100 1 < data/WARNECKE.IN2
+159 155
+---
+./bl 20 0 1 < data/WARNECKE.IN2
+111 79
+---
+./bl 20 25 1 < data/WARNECKE.IN2
+86 79
+---
+./bl 20 50 1 < data/WARNECKE.IN2
+83 79
+---
+./bl 20 75 1 < data/WARNECKE.IN2
+84 79
+---
+./bl 20 100 1 < data/WARNECKE.IN2
+81 79
+---
+./bl 50 0 1 < data/SCHOLL.IN2
+2205 1394
+---
+./bl 50 25 1 < data/SCHOLL.IN2
+1702 1394
+---
+./bl 50 50 1 < data/SCHOLL.IN2
+1688 1394
+---
+./bl 50 75 1 < data/SCHOLL.IN2
+1449 1394
+---
+./bl 50 100 1 < data/SCHOLL.IN2
+1461 1394
+---
+./bl 38 0 1 < data/SCHOLL.IN2
+2115 1834
+---
+./bl 38 25 1 < data/SCHOLL.IN2
+2002 1834
+---
+./bl 38 50 1 < data/SCHOLL.IN2
+1896 1834
+---
+./bl 38 75 1 < data/SCHOLL.IN2
+1883 1834
+---
+./bl 38 100 1 < data/SCHOLL.IN2
+1892 1834
+---
+./bl 25 0 1 < data/SCHOLL.IN2
+3040 2787
+---
+./bl 25 25 1 < data/SCHOLL.IN2
+2835 2787
+---
+./bl 25 50 1 < data/SCHOLL.IN2
+2825 2787
+---
+./bl 25 75 1 < data/SCHOLL.IN2
+2828 2787
+---
+./bl 25 100 1 < data/SCHOLL.IN2
+2839 2787
+---
+./bl 20 0 1 < data/WEE-MAG.IN2
+103 77
+---
+./bl 20 25 1 < data/WEE-MAG.IN2
+79 77
+---
+./bl 20 50 1 < data/WEE-MAG.IN2
+79 77
+---
+./bl 20 75 1 < data/WEE-MAG.IN2
+79 77
+---
+./bl 20 100 1 < data/WEE-MAG.IN2
+78 77
+---
+./bl 30 0 1 < data/WEE-MAG.IN2
+81 56
+---
+./bl 30 25 1 < data/WEE-MAG.IN2
+57 56
+---
+./bl 30 50 1 < data/WEE-MAG.IN2
+56 56
+---
+./bl 30 75 1 < data/WEE-MAG.IN2
+56 56
+---
+./bl 30 100 1 < data/WEE-MAG.IN2
+56 56
+---
