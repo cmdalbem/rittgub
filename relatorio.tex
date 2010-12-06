@@ -43,12 +43,21 @@ O trabalho final da disciplina de Otimização Combinatória consiste na escolha
  Balanceamento de linhas de produção \cite{salbp}, e a meta-heurística a GRASP \cite{grasp}.
 
 GRASP é um acrônimo para \emph{Greedy Randomized Adaptive Search Procedure},
-cujo nome já especifica muito bem a sua filosofia. O objetivo é formular o
-programa com uma heurística gulosa, e o procedimento de resolução da
-meta-heurística randomizará cada passo com uma das soluções "mais gulosas".
-Para cada solução criada é feita uma Busca Local (\emph{best improvement} ou
+cujo nome já especifica muito bem a técnica utilizada. Tipicamente em problemas
+de otimização combinatória o número de soluções é exponencial e inviabiliza a
+busca exaustiva. Uma estratégia válida é montar soluções de maneira gulosa e
+esperar que elas sejam boas o suficiente, mas o é um método propício a ficar
+preso em mínimos locais. Já uma abordagem puramente aleatória explora rapidamente
+várias soluções possíveis, mas não é melhor do que uma busca cega no mar de soluções.
+Além disso dada uma solução inicial gerada à partir de algum método é possível
+explorar a sua vizinhança à procura de soluções melhores.
+
+O GRASP é um compromisso entre a abordagem gulosa cega e a randômica bruta e
+visa combiná-las num passo de construção gulosa aleatória de uma solução
+inicial. Para cada solução criada é feita uma Busca Local (\emph{best improvement} ou
 \emph{first improvement}, dependendo da implementação),
-e o processo é repetido por um número pré-determinado de iterações.
+e o processo é repetido por até que se chegue à condição de parada. Esta pode ser
+dada em número de iterações, número de iterações sem melhora, tempo máximo, etc ...
 
 Como objetivos adicionais do trabalho estão a formulação do problema como
 um problema de programação inteira/linear, e a execução das soluções
@@ -78,7 +87,6 @@ precedência, i.e. para cada $tu \in P$, $s(t) \leq s(u)$.
 
  \item [Objetivo] Minimizar o tempo de ciclo  $max_{i\in[m]}\sum_{j\in T\mid s(t)=i}t_j$.
 \end{description}
-
 
 \chapter{Programação inteira}
 
@@ -130,8 +138,8 @@ end;
 
 \chapter{GRASP}
 
-O grupo tentou duas abordagens para a resolver o problema. Uma delas se encaixa
-perfeitamente no modelo do GRASP,  a outra nem tanto.
+O grupo tentou duas abordagens para a resolver o problema. A primeira se
+mostrou muito "ingênua" e possui um tempo de execução e qualidade ruins.
 
 \section{Primeira Abordagem}
 
@@ -140,9 +148,11 @@ perfeitamente no modelo do GRASP,  a outra nem tanto.
 Para cada tarefa do vetor de tarefas o algoritmo tenta colocá-la, se
 isto respeitar o grafo de precedência, em alguma
 máquina de maneira que o maior ciclo entre todas as máquinas
-seja o menor possível. Cada um desses resultados (o valor de um maior ciclo)
+seja o menor possível. Cada um desses resultados (o valor de um maior ciclo e
+a máquina que gera essa solução)
 é colocado de maneira ordenada em uma Restricted Candidate List (\emph{RCL})
-de tamanho $n$ de tal sorte que se for adicionado um elemento quando ela estiver
+de tamanho $n$ (parametrizado na execução do código)
+de tal sorte que se for adicionado um elemento quando ela estiver
 cheia o último seja descartado. Após construir a \emph{RCL} retiramos um dos
 elementos de maneira aleatória e esta será a máquina na qual deveremos inserir
 a tarefa atual.
@@ -232,7 +242,7 @@ de uma tarefa possível para ir na
 posição $i$ do vetor ordenado, escolhemos randomicamente entre todas.
 
 Tendo o vetor ordenado, calculamos um limite inferior para a
-resposta. Isto é feito pegando o valor máximo entre $\frac{\sum_{i\in T}t_i}{m}$
+resposta. Isto é feito escolhendo o valor máximo entre $\frac{\sum_{i\in T}t_i}{m}$
  e $max_{i\in T}t_i$. Sendo o primeiro
 o valor da distribuição mais uniforme possível, ou seja,
 soma dos custos de todas tarefas e dividido pelo
@@ -257,7 +267,35 @@ A etapa de busca local permanece igual à anterior.
 
 \chapter{Resultados}
 
-botar tabela
+\begin{table}[htbp]
+ \begin{tabular}{|c|c|c|c|c|}
+  \hline
+  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
+  \hline
+  Arcus2 & 27 & 5689 & 5835 & 92.88 \\
+  \hline
+  Arcus2 & 9 & 16711 &  & 99.23 \\
+  \hline
+  Bathol2 & 51 & 84 & 95 & 88.42 \\
+  \hline
+  Bathol2 & 27 & 157 & 166 & 94.57 \\
+  \hline
+  Warnecke & 10 & 155 & 160 & 96.87 \\
+  \hline
+  Warnecke & 20 & 79 & 85 & 92.94 \\
+  \hline
+  Scholl & 50 & 1394 & 1506 & 92.56 \\
+  \hline
+  Scholl & 38 & 1834 & 1938 & 94.63 \\
+  \hline
+  Scholl & 25 & 2787 & 2862 & 97.37 \\
+  \hline
+  Wee-Mag & 20 & 77 & 81 & 95.06 \\
+  \hline
+  Wee-Mag & 30 & 56 & 57 & 98.24 \\
+  \hline
+ \end{tabular}
+\end{table}
 
 \chapter{Conclusão}
 
