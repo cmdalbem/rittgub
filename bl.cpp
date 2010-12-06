@@ -8,7 +8,7 @@
 #include <cassert>
 #include <cmath>
 
-#define MAX_ITERATIONS 10000
+#define MAX_ITERATIONS 100000
 #define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
@@ -29,10 +29,11 @@ int costs[MAX_TASKS];
 int n, m, currentSolution, cicle;
 int atribs[MAX_MACHINES][MAX_TASKS];
 int degree[MAX_TASKS], topSorted[MAX_TASKS];
+int alpha = 0;
 
 Candidate rcl[MAX_MACHINES];
 int numCandidates = 5;
-int seed;
+int seed = time(NULL);
 
 /*
     FUNCTIONS
@@ -64,7 +65,7 @@ void initRcl(int rclSize);
 int main(int argc, char**argv) {
 
     const char* message = "Missing arguments. Use it like this:\n\
-                           ./bl num_machines num_candidates [seed] [< input_file]\n";
+                           ./bl num_machines alpha [seed] [< input_file]\n";
 	if(argc < 3) {
 		puts(message);
 		exit(1);
@@ -75,7 +76,7 @@ int main(int argc, char**argv) {
 	}
 
 	m = atoi(argv[1]);
-	numCandidates = atoi(argv[2]);
+	alpha = atoi(argv[2]);
     seed = argc == 4 ? atoi(argv[3]) : 0;
 
 	init();
@@ -84,9 +85,9 @@ int main(int argc, char**argv) {
 	//printInput();
 
 	for(int it = 0; it < MAX_ITERATIONS; it++) {
-        greedyFialho();
+        //greedyFialho();
 		//randomGreedy();
-		//greedySoia();
+		greedySoia();
 
    		localSearch();
 		updateSolution();
@@ -356,7 +357,11 @@ void topSort() {
 
 	while(top>-1)
 	{
-		int node = rand() % (top + 1);
+		int node;
+		if(alpha>0)
+			node = rand() % (int)ceil((top + 1) * alpha/100.);
+		else
+			node = 0;
 		i=stack[node];
 		for(int b = node+1; b <= top; b++) {
 			stack[b-1] = stack[b];

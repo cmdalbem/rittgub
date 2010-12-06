@@ -197,6 +197,41 @@ colocando todas tarefas pendentes na última máquina.
 
 \chapter{Resultados}
 
+Todos resultados foram obtidos utilizando como limite 10000 iterações.
+
+\begin{table}[htbp]
+ \begin{tabular}{|c|c|c|c|c|}
+  \hline
+  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
+  \hline
+  Arcus2 & 27 & 5689 & 10161 & 55.98 \\ %1,2
+  \hline
+  Arcus2 & 9 & 16711 & 48429 & 34.50 \\ %1,2
+  \hline
+  Bathol2 & 51 & 84 & 97 & 86.59 \\ %1,2
+  \hline
+  Bathol2 & 27 & 157 & 735 & 21.36 \\ %1,0
+  \hline
+  Warnecke & 10 & 155 & 331 & 46.82 \\ %1,0
+  \hline
+  Warnecke & 20 & 79 & 212 & 37.26 \\ %1,0
+  \hline
+  Scholl & 50 & 1394 & 3701 & 37.66 \\ %1,2
+  \hline
+  Scholl & 38 & 1834 & 13997 & 13.10 \\ %1,0
+  \hline
+  Scholl & 25 & 2787 & 21287 & 13.09 \\ %1,2
+  \hline
+  Wee-Mag & 20 & 77 & 159 & 48.42 \\ %1,2
+  \hline
+  Wee-Mag & 30 & 56 & 108 & 51.85 \\ %1,2
+  \hline
+ \end{tabular}
+\end{table}
+
+Média: 40.60
+
+
 Todos resultados foram obtidos utilizando como limite 100000 iterações.
 
 \begin{table}[htbp]
@@ -229,22 +264,36 @@ Todos resultados foram obtidos utilizando como limite 100000 iterações.
  \end{tabular}
 \end{table}
 
+Média: 94.79
+
 
 \chapter{Conclusão}
 
-Os resultados obtidos se mostraram bastante satisfatórios, tendo em média uma porcentagem de optimalidade de 94.79. O
-GRASP se mostrou como uma heurística muito boa, não só pelos bons resultados, mas também pela facilidade em se
-trabalhar. De fato, de um modo geral, é bastante fácil entender e implementar o GRASP: os conceitos envolvidos são
-bastante simples e ele é composto apenas de duas funções principais (construção gulosa e busca local), sendo a única
-dificuldade dependente do problemo sendo tratado, pois dependendo do mesmo, formular uma vizinhança ou até mesmo pensar
-em um algoritmo guloso que gere a solução inicial pode ser complicado.
+Os resultados
+obtidos se mostraram bastante satisfatórios, tendo em média uma porcentagem de optimalidade de 94.79. O
+GRASP se mostrou uma heurística muito boa, não só pelos bons resultados, mas também pela facilidade em se
+trabalhar. 
 
+De um modo geral, é bastante fácil entender e implementar o GRASP: os conceitos envolvidos são
+bastante simples e ele é composto apenas de duas funções principais (construção gulosa e busca local) e possui
+apenas um parâmetro para ser ajustado: o tamanho da lista restrita de candidatos. Porém, além disso existe uma
+dificuldade dependente do problema sendo tratado, que é formular uma vizinhança ou até mesmo pensar
+em um algoritmo guloso, e que possa ser randomizado, que gere a solução inicial viável.
+
+Ao final do trabalho podemos concluir que a nossa modelagem do problema com a heurística GRASP não se mostrou muito
+efetiva. Isto provavelmente se deve à pouca abragência da busca local e à geração de soluções iniciais
+que quando aleatoriezada tendia a criar soluções muito ruins.
 
 \thebibliography{9}
 
 \bibitem{salbp}
 	\url{http://www.assembly-line-balancing.de/index.php?content=classview&content2=classview&content3=classviewdlfree&content4=classview&classID=28&type=dl}
 	\emph{Homepage for Assembly Line Optimization Research (Assembly Line Balancing and Sequencing)}
+
+\bibitem{grasp}
+	\url{http://www.optimization-online.org/DB_FILE/2001/09/371.pdf}
+	\author{RESENDE, MAURICIO G.C. \and RIBEIRO, CELSO C.}
+	\title{Greedy Randomized Adaptative Search Procedures}
 
 \end{document}
 
