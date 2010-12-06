@@ -97,8 +97,8 @@ int main(int argc, char**argv) {
 
    		localSearch();
 		updateSolution();
-        //printAtribs();
-
+		
+		//printAtribs();
 	}
 
     elapsed = time(0) - elapsed;
@@ -121,7 +121,7 @@ int longestCicle() {
 
 int canDelegate(int task, int machine) {
 
-    int can = 1;
+    int canDepends = 1;
 
     for (int i=0; i < n; i++) {
         if (graph[i][task]) {
@@ -132,11 +132,26 @@ int canDelegate(int task, int machine) {
                     taskCan = taskCan || atribs[j][k] == i;
                   }
             }
-            can = can && taskCan;
+            canDepends = canDepends && taskCan;
+        }
+     }
+     
+     int canDependable = 1;
+     
+	 for (int i=0; i < n; i++) {
+        if (graph[task][i]) {
+            int taskCan = 1;
+            //search in each machine that comes before it
+            for (int j = 0; j < machine; j++) {
+                 for (int k=0; k < atribs[j][N_TASKS]; k++) {
+                    taskCan = taskCan && atribs[j][k] != i;
+                  }
+            }
+            canDependable = canDependable && taskCan;
         }
      }
 
-    return can;
+    return canDepends && canDependable;
 }
 
 int comp (const void *e1, const void *e2) { return (*(int*)e2 - *(int*)e1); }
@@ -446,7 +461,7 @@ void printAtribs() {
     for (int i = 0; i < m; i += 1) {
         printf("%d: ",i);
         for (int j = 0; j < atribs[i][N_TASKS]; j += 1) {
-            printf(" %d ",atribs[i][j]);
+            printf(" %d ",atribs[i][j]+1);
         }
         printf("\n");
     }
@@ -470,7 +485,7 @@ void printInput() {
 void printTop() {
 	printf("Topological order:\n");
 	for(int i = 0; i < n; ++i)
-			printf("%i ", topSorted[i]);
+			printf("%i ", topSorted[i]+1);
 	printf("\n");
 }
 
