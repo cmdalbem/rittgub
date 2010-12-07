@@ -109,6 +109,10 @@ Seja $T$ o conjunto de tarefas e $M$ o conjunto de máquinas.$x_i_j$ é a variá
 
 \section{Solução em GLPK}
 
+A parte dos dados é gerada por uma função do programa principal. Chamando-o com  uma flag específica, o programa não executará o GRASP, mas apenas se utilizará das funções de leitura dos casos de teste para escrever os programas para o solver.
+
+Segue listagem do código em GNU MathProg que modela o programa, além de um exemplo de área de dados, gerado para o caso de teste MERTENS.IN2.
+
 \begin{lstlisting}
 param M;
 param N;
@@ -131,6 +135,29 @@ subject to delegateAll {i in 1..N}:
 subject to respectPrecedences {u in 1..N, v in 1..N}:
 	if prec[u,v] == 1 then
 		(sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);\n\n");
+
+data;
+param M := 5;
+param N := 7;
+
+param costs :=
+1 1
+2 5
+3 4
+4 3
+5 5
+6 6
+7 5;
+param prec :
+1 2 3 4 5 6 7 :=
+1 0 0 0 0 0 0 0 
+2 1 0 0 0 0 0 0 
+3 0 1 0 0 0 0 0 
+4 1 0 0 0 0 0 0 
+5 0 1 0 0 0 0 0 
+6 0 0 0 0 1 0 0 
+7 0 0 0 1 0 0 0 ;
+end;
 \end{lstlisting}
 
 \section{Resultados}
