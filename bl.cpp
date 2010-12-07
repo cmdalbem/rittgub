@@ -8,16 +8,27 @@
 #include <cmath>
 
 #define MAX_ITERATIONS 100000
-#define MAX_TASKS 300 // THIS... IS... SPARTAAAAAAA !!!
+#define MAX_TASKS 300
 #define MAX_MACHINES 70
 #define LAST_TASK(i) (atribs[(i)][N_TASKS]-1)
 #define N_TASKS  MAX_TASKS - 1
 #define MACHINE_CICLE MAX_TASKS - 2
 
+/*
+    RCL
+*/
+
 typedef struct _candidate {
     int value;
     int index;
 }Candidate;
+
+void insertRcl(Candidate c, int rclSize);
+void printRcl(int rclSize);
+void initRcl(int rclSize);
+
+Candidate rcl[MAX_MACHINES];
+int numCandidates = 5;
 
 /*
     GLOBAL VARIABLES
@@ -30,109 +41,36 @@ int atribs[MAX_MACHINES][MAX_TASKS];
 int degree[MAX_TASKS], topSorted[MAX_TASKS];
 int alpha = 0;
 
-Candidate rcl[MAX_MACHINES];
-int numCandidates = 5;
 int seed = time(NULL);
+
 int isSoia;
 int isToCreateGlpk;
 
 /*
-    FUNCTIONS
-    //TODO separate them
+    INPUTS AND OUTPUTS
 */
+
 void init();
 void readInput();
-void topSort();
 void printInput();
-void randomGreedy();
-void localSearch();
-void updateSolution();
 void printAtribs();
 void printTop();
 void printCosts();
+void createGlpk();
+
+/*
+    GREEDY CONSTRUCTIONS
+*/
+
+void randomGreedy();
 void greedySoia();
-void greedyFialho();
+
+void topSort();
+void localSearch();
+void updateSolution();
 
 int longestCicle();
 int canDelegate(int task,int machine);
-
-/*
-    RCL
-*/
-void insertRcl(Candidate c, int rclSize);
-void printRcl(int rclSize);
-void initRcl(int rclSize);
-
-void createGlpk() {
-
-	FILE * file;
-    char buffer [100];
-
-    char filename[30];
-    int filenum=0;
-    sprintf(filename,"glpk/%i",filenum);
-    while( fopen (filename,"r") != NULL ) {
-		filenum++;
-		sprintf(filename,"glpk/%i",filenum);
-	}
-	
-	file = fopen (filename,"w");
-	
-	fprintf(file,"param M;\
-param N;\n\
-param costs{1..N} >= 0;\n\
-param prec{1..N, 1..N} >=0;\n\
-\n\
-var cicletime, integer;\n\
-var delegate{1..N,1..M} >= 0, binary;\n\
-\n\
-\n\
-minimize minCicleTime:\n\
-cicletime;\n\
-\n\
-subject to cicleTimeLimit {j in 1..M}:\n\
-(sum {i in 1..N} costs[i]*delegate[i,j]) <= cicletime;\n\
-\n\
-subject to delegateAll {i in 1..N}:\n\
-(sum {j in 1..M} delegate[i,j]) = 1;\n\
-\n\
-subject to respectPrecedences {u in 1..N, v in 1..N}:\n\
-if prec[u,v] == 1 then\n\
-(sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);\n\n");
-	
-	fprintf(file,"data;\n");
-	
-	fprintf(file,"param M := %i;\n",m);
-	fprintf(file,"param N := %i;\n\n",n);
-	
-	fprintf(file,"param costs :=\n");
-	for(int i = 0; i < n; i++) {
-		fprintf(file,"%i %i", i+1, costs[i]);
-		if(i==n-1)
-			fprintf(file,";",n);
-		fprintf(file,"\n",n);	
-	}
-
-	fprintf(file,"param prec :\n");
-	for(int i=0; i<n; i++)
-		fprintf(file,"%i ",i+1);
-	fprintf(file,":=\n");
-	
-	int j;
-	for(int i = 0; i < n; i++) {
-		fprintf(file,"%i ",i+1);
-		for(j = 0; j < n; j++)
-			fprintf(file,"%i ", graph[j][i]);
-		if(i==n-1)
-			fprintf(file,";\n");
-		else
-			fprintf(file,"\n");
-	}
-	
-	fprintf(file,"end;");
-	
-	fclose(file);
-}
 
 int main(int argc, char**argv) {
 
@@ -155,15 +93,12 @@ int main(int argc, char**argv) {
     seed = argc == 5 ? atoi(argv[4]) : time(NULL);
 
 	init();
-
 	readInput();
-	
+
 	if(isToCreateGlpk)
 		createGlpk();
 	else
 	{
-		//printInput();
-
 		int elapsed = time(0);
 
 		for(int it = 0; it < MAX_ITERATIONS; it++) {
@@ -175,13 +110,9 @@ int main(int argc, char**argv) {
 
 			localSearch();
 			updateSolution();
-			
-			//printAtribs();
 		}
 
 		elapsed = time(0) - elapsed;
-
-		//int localCicle = longestCicle();
 
 		printf("%i %i\n", elapsed, cicle);
 	}
@@ -214,9 +145,9 @@ int canDelegate(int task, int machine) {
             canDepends = canDepends && taskCan;
         }
      }
-     
+
      int canDependable = 1;
-     
+
 	 for (int i=0; i < n; i++) {
         if (graph[task][i]) {
             int taskCan = 1;
@@ -233,16 +164,8 @@ int canDelegate(int task, int machine) {
     return canDepends && canDependable;
 }
 
-int comp (const void *e1, const void *e2) { return (*(int*)e2 - *(int*)e1); }
-
-void greedyFialho() {
-    qsort(costs,n, sizeof(int) , comp );
-    randomGreedy();
-}
-
 void greedySoia() {
 	topSort();
-	//printTop();
 	for(int i = 0; i < MAX_TASKS; i++) {
 		for(int j = 0; j < MAX_MACHINES; j++)
 			atribs[j][i] = 0;
@@ -286,6 +209,10 @@ void greedySoia() {
 	}
 }
 
+/*
+    RCL
+*/
+
 void insertRcl(Candidate c, int rclSize) {
 
     bool inserted = 0;
@@ -300,7 +227,6 @@ void insertRcl(Candidate c, int rclSize) {
             inserted = 1;
         }
     }
-
 }
 
 void initRcl(int rclSize) {
@@ -309,22 +235,18 @@ void initRcl(int rclSize) {
         rcl[i].value = INT_MAX;
         rcl[i].index = INT_MAX;
     }
-
 }
 
 void printRcl(int rclSize) {
-
     for (int i = 0; i < rclSize; i++) {
         printf("[%d,%d]\n",rcl[i].value,rcl[i].index);
     }
-
 }
 
 void randomGreedy() {
 
-    int rclSize = 2;//ceil(m * randomization);
+    int rclSize = (int)ceil((m + 1) * alpha/100.);
 
-    //clean atributions
 	for(int i = 0; i < MAX_TASKS; i++) {
 		for(int j = 0; j < MAX_MACHINES; j++)
 			atribs[j][i] = 0;
@@ -339,7 +261,7 @@ void randomGreedy() {
 		for(int j = 0; j < m; j++) {
 
             if ( canDelegate( i , j ) ) {
-                //printf("Can delegate\n");
+
                 numDelegated++;
 
                 int new_cicle = atribs[j][MACHINE_CICLE] + costs[i];
@@ -364,33 +286,18 @@ void randomGreedy() {
 
             } else {
             //    printf("Couldnt delegate task %d in machine %d\n",i,j);
-            //    printAtribs();
             }
 
 		}
 
-        if (numDelegated == 0) {
-            printf("tarefa %d\n",i);
-            printAtribs();
-        }
-
         assert(numDelegated > 0);
         int size = std::min(numDelegated,rclSize);
 
-        //printf("Size: %d\n",size);
         int chosen = rcl[rand()%size].index;
-        //printf("Chosen: %d\n",chosen);
-        //printRcl(rclSize);
-
-        //printf("rclSize: %d\n",rclSize);
-        //printRcl(rclSize);
-
-        //printf("Index: %d\n",index);
 
         atribs[chosen][N_TASKS]++;
         atribs[chosen][LAST_TASK(chosen)] = i;
         atribs[chosen][MACHINE_CICLE] += costs[i];
-        //printAtribs();
 
 	}
 
@@ -572,5 +479,75 @@ void printCosts() {
     for (int i = 0; i < n; i += 1) {
         printf("%d: %d\n",i,costs[i]);
     }
+}
+
+void createGlpk() {
+
+	FILE * file;
+
+    char filename[30];
+    int filenum=0;
+    sprintf(filename,"glpk/%i",filenum);
+    while( fopen (filename,"r") != NULL ) {
+		filenum++;
+		sprintf(filename,"glpk/%i",filenum);
+	}
+
+	file = fopen (filename,"w");
+
+	fprintf(file,"param M;\
+param N;\n\
+param costs{1..N} >= 0;\n\
+param prec{1..N, 1..N} >=0;\n\
+\n\
+var cicletime, integer;\n\
+var delegate{1..N,1..M} >= 0, binary;\n\
+\n\
+\n\
+minimize minCicleTime:\n\
+cicletime;\n\
+\n\
+subject to cicleTimeLimit {j in 1..M}:\n\
+(sum {i in 1..N} costs[i]*delegate[i,j]) <= cicletime;\n\
+\n\
+subject to delegateAll {i in 1..N}:\n\
+(sum {j in 1..M} delegate[i,j]) = 1;\n\
+\n\
+subject to respectPrecedences {u in 1..N, v in 1..N}:\n\
+if prec[u,v] == 1 then\n\
+(sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);\n\n");
+
+	fprintf(file,"data;\n");
+
+	fprintf(file,"param M := %i;\n",m);
+	fprintf(file,"param N := %i;\n\n",n);
+
+	fprintf(file,"param costs :=\n");
+	for(int i = 0; i < n; i++) {
+		fprintf(file,"%i %i", i+1, costs[i]);
+		if(i==n-1)
+			fprintf(file,";");
+		fprintf(file,"\n");
+	}
+
+	fprintf(file,"param prec :\n");
+	for(int i=0; i<n; i++)
+		fprintf(file,"%i ",i+1);
+	fprintf(file,":=\n");
+
+	int j;
+	for(int i = 0; i < n; i++) {
+		fprintf(file,"%i ",i+1);
+		for(j = 0; j < n; j++)
+			fprintf(file,"%i ", graph[j][i]);
+		if(i==n-1)
+			fprintf(file,";\n");
+		else
+			fprintf(file,"\n");
+	}
+
+	fprintf(file,"end;");
+
+	fclose(file);
 }
 
