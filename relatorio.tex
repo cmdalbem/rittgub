@@ -136,7 +136,7 @@ param : prods : custoInicial preco :=
 end;
 \end{lstlisting}
 
-\chapter{GRASP}
+\chapter{Modelagem utilizando GRASP}
 
 O grupo tentou duas abordagens para a resolver o problema. A primeira se
 mostrou muito "ingênua" e possui um tempo de execução e qualidade ruins.
@@ -237,7 +237,7 @@ de longe se mostrou  mais bem sucedida, em termos de
 eficiência computacional (neste caso medindo
 somente tempo de execução) e qualidade da resposta.
 
-Primeiramente as tarefas são ordenadas topologicamente.
+Primeiramente as tarefas são ordenadas topologicamente \cite{top}.
 Um problema aqui é que a ordenação é deterministica e gera
 sempre o mesmo resultado, e isso é indesejado. Por isso, sempre que temos mais
 de uma tarefa possível para ir na
@@ -267,7 +267,7 @@ colocando todas tarefas pendentes na última máquina.
 
 A etapa de busca local permanece igual à anterior.
 
-\chapter{Resultados}
+\subsection{Resultados}
 
 Os resultados foram bastante satisfatórios, conseguindo para alguns casos um
 valor muito próximo da otimalidade, e para um o valor ótimo.
@@ -331,10 +331,9 @@ pensar em um algoritmo guloso que gerasse uma solução inicial válida.
 
 \bibitem{top}
 %    @book{0387001638,
-\author{Steven S. Skiena and Miguel Revilla},
-\title = {Programming Challenges},
-\publisher = {Springer},
-\year = {2003},
+\author{Steven S. Skiena and Miguel Revilla}
+\title = {Programming Challenges}
+
 
 \bibitem{grasp}
        \url{http://www.optimization-online.org/DB_FILE/2001/09/371.pdf}
@@ -344,6 +343,6 @@ pensar em um algoritmo guloso que gerasse uma solução inicial válida.
 \bibitem{salbp}
 	\url{http://www.assembly-line-balancing.de/index.php?content=classview&content2=classview&content3=classviewdlfree&content4=classview&classID=28&type=dl}
 	\emph{Homepage for Assembly Line Optimization Research (Assembly Line Balancing and Sequencing)}
-}
+
 \end{document}
 
