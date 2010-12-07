@@ -188,34 +188,36 @@ todas máquinas $m*$, melhorando o \emph{tempo de ciclo} global.
 Esta abordagem, principalmente a etapa de construção gulosa, não se mostrou muito
 efetiva e os resultados deixaram a desejar. A seguir uma lista com os resultados:
 
-Todos resultados foram obtidos utilizando como limite 10000 iterações.
+Todos resultados foram obtidos utilizando como limite 10000 iterações. Alguns deles
+demoraram muito tempo para executar e foram ignorados, sendo o tempo denotado com
+um símbolo "-".
 
 \begin{table}[htbp]
  \begin{tabular}{|c|c|c|c|c|}
   \hline
   \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
   \hline
-  Arcus2 & 27 & 5689 & 6125 & 92.88 \\
+  Arcus2 & 27 & 5689 & 8023 & 70.90 \\
   \hline
-  Arcus2 & 9 & 16711 & 16839 & 99.23 \\
+  Arcus2 & 9 & 16711 & 18171 & 91.96 \\
   \hline
-  Bathol2 & 51 & 84 & 95 & 88.42 \\
+  Bathol2 & 51 & 84 & 87 & 96.55 \\
   \hline
-  Bathol2 & 27 & 157 & 166 & 94.57 \\
+  Bathol2 & 27 & 157 & 168 & 93.45 \\
   \hline
-  Warnecke & 10 & 155 & 160 & 96.87 \\
+  Warnecke & 10 & 155 & 163 & 95.09 \\
   \hline
-  Warnecke & 20 & 79 & 85 & 92.94 \\
+  Warnecke & 20 & 79 & 111 & 71.17 \\
   \hline
-  Scholl & 50 & 1394 & 1506 & 92.56 \\
+  Scholl & 50 & 1394 & 8082 & 17.24 \\
   \hline
-  Scholl & 38 & 1834 & 1938 & 94.63 \\
+  Scholl & 38 & 1834 & - & - \\
   \hline
-  Scholl & 25 & 2787 & 2862 & 97.37 \\
+  Scholl & 25 & 2787 & - & - \\
   \hline
-  Wee-Mag & 20 & 77 & 81 & 95.06 \\
+  Wee-Mag & 20 & 77 & 80 & 96.25 \\
   \hline
-  Wee-Mag & 30 & 56 & 57 & 98.24 \\
+  Wee-Mag & 30 & 56 & 58 & 96.55 \\
   \hline
  \end{tabular}
 \end{table}
@@ -318,6 +320,14 @@ dependente do problema sendo tratado, foi difícil formular uma vizinhança e
 pensar em um algoritmo guloso que gerasse uma solução inicial válida.
 
 \thebibliography{9}
+
+\bibitem{inteiro1}
+    \title{Evaluating Optimization Models to Solve SALBP*}
+    \author{Rafael Pastor; Laia Ferrer; Alberto García}
+
+\bibitem{inteiro2}
+    \title{O uso da programação inteira 0-1 para o balanceamento de linhas de montagem: modelagem, estudos de caso e avaliação}
+    \author{Flávio César Faria Fernandes; Moacir Godinho Filho; Ricardo Augusto Cutigi; Aline Malerbo Guiguet}
 
 \bibitem{top}
 %    @book{0387001638,
