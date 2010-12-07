@@ -84,49 +84,82 @@ precedência, i.e. para cada $tu \in P$, $s(t) \leq s(u)$.
 
 \section{Formulação inteira}
 
+Baseada em \cite{inteiro1} e \cite{inteiro2}.
+
+Seja $T$ o conjunto de tarefas e $M$ o conjunto de máquinas.$x_i_j$ é a variável que indica se a tarefa $i$ foi atribuída à máquina $j$.
+
 \begin{center}
-\begin{tabular}{ r l }
-  \textbf{min} & x \\
-  \textbf{s.a} & $a = 1$ \\
-  & $b = 2$ \\
-  & $x = INF$ \\
+\begin{tabular}{ r l l }
+  \textbf{min} & T &\\
+  \textbf{s.a} & $ \sum_{i=1}^{n} t_i \cdot x_i_j \leq T $ & $\forall j \in M$\\
+& $ \sum_{j=1}^{m} x_i_j = 1 & $\forall i \in T$ \\
+& $ \sum_{j=1}^{m} j \cdot x_u_j \leq  \sum_{j=1}^{m} j \cdot x_v_j $ & \forall (u,v) \mid PRECEDE[u,v] = 1 \\
+& $ x_i_j \in \mathbb{B} $ & $\forall i \in T$, $\forall j \in M$ \\
+	
 \end{tabular}
 \end{center}
 
 \section{Solução em GLPK}
 
 \begin{lstlisting}
-set prods;
+param M;
+param N;
+param costs{1..N} >= 0;
+param prec{1..N, 1..N} >=0;
 
-param custoInicial{prods} >= 0;
-param preco{prods} >= 0;
-
-var quantidade{ prods } >= 0, integer;
-var produz{prods } binary;
-
-maximize lucro:
-	sum {j in prods} (preco[j]*quantidade[j] - custoInicial[j]*produz[j]);
-
-subject to limiteProducao:
-	(sum {j in prods} produz[j]) <= 2;
-
-subject to limiteQuantidade:
-	(produz['1'] + produz['2'])*2 >= produz['3'] + produz['4'];
-
-subject to precisaProduzir {j in prods}:
-	quantidade[j] <= 2000*produz[j];
+var cicletime, integer;
+var delegate{1..N,1..M} >= 0, binary;
 
 
-data;
+minimize minCicleTime:
+	cicletime;
 
-param : prods : custoInicial preco :=
-	'1'	50000		70
-	'2'	40000		60
-	'3'	70000		90
-	'4'	60000		80;
+subject to cicleTimeLimit {j in 1..M}:
+	(sum {i in 1..N} costs[i]*delegate[i,j]) <= cicletime;
 
-end;
+subject to delegateAll {i in 1..N}:
+	(sum {j in 1..M} delegate[i,j]) = 1;
+
+subject to respectPrecedences {u in 1..N, v in 1..N}:
+	if prec[u,v] == 1 then
+		(sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);\n\n");
 \end{lstlisting}
+
+\section{Resultados}
+
+\begin{table}[htbp]
+ \begin{tabular}{|c|c|c|c|c|}
+  \hline
+  \textbf{Instância} & \textbf{m} & \textbf{Tempo de execução} & \textbf{Solução Ótima} & \textbf{Solução Obtida} \\
+  \hline
+  Arcus2 & 27 & 1800* & 5689  & 52039 \\
+  \hline
+  Arcus2 & 9 & 1800* & 16711 & 32649 \\
+  \hline
+  Bathol2 & 51 & 1800* & 84 & 1527 \\
+  \hline
+  Bathol2 & 27 & 1800* & 157 & 1211 \\
+  \hline
+  Warnecke & 10 & 847 & 155 & 155 \\
+  \hline
+  Warnecke & 20 & 1800* & 79 & 349 \\
+  \hline
+  Scholl & 50 & 1800* & 1394 & 57552 \\
+  \hline
+  Scholl & 38 & 1800* & 1834 & 0 \\
+  \hline
+  Scholl & 25 & 1800* & 2787 & 32326 \\
+  \hline
+  Wee-Mag & 20 & 1800* & 77 & 86 \\
+  \hline
+  Wee-Mag & 30 & 1800* & 56 & 87 \\
+  \hline
+ \end{tabular}
+\end{table}
+
+O testes marcados com * foram interrompidos por alcançarem o limite de tempo imposto.
+
+
 
 \chapter{GRASP}
 
