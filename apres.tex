@@ -36,7 +36,7 @@
 	estações define o \emph{tempo de ciclo}.
 
 	\begin{center}
-	\includegraphics[]{imagemlegal.aqui}
+	%\includegraphics[]{imagemlegal.aqui}
 	\end{center}
 
 \end{frame}
@@ -67,10 +67,10 @@
 	\begin{center}
 	\begin{tabular}{ r l l }
 	  \textbf{min} & T &\\
-	  \textbf{s.a} & $ \sum_{i=1}^{n} t_i \cdot x_i_j \leq T $ & $\forall j \in M$\\
-	& $ \sum_{j=1}^{m} x_i_j = 1 & $\forall i \in T$ \\
-	& $ \sum_{j=1}^{m} j \cdot x_u_j \leq  \sum_{j=1}^{m} j \cdot x_v_j $ & \forall (u,v) \mid PRECEDE[u,v] = 1 \\
-	& $ x_i_j \in \mathbb{B} $ & $\forall i \in T$, $\forall j \in M$ \\
+	  \textbf{s.a} & $ \sum_{i=1}^{n} t_i \cdot x_{ij} \leq T $ & $\forall j \in M$\\
+	& $ \sum_{j=1}^{m} x_{ij} = 1$ & $\forall i \in T$ \\
+	& $ \sum_{j=1}^{m} j \cdot x_{uj} \leq  \sum_{j=1}^{m} j \cdot x_{vj} $ & $\forall (u,v) \mid PRECEDE[u,v] = 1 $\\
+	& $ x_{ij} \in \mathbb{B} $ & $\forall i \in T$, $\forall j \in M$ \\
 	\end{tabular}
 	\end{center}
 
@@ -176,9 +176,28 @@ end;
 \end{frame}
 
 
+
+\begin{frame}
+\frametitle{Modelagem GRASP}
+\framesubtitle{Cálculo da Vizinhança}
+
+Sendo m* a máquina com maior carga...
+
+\begin{description}
+	\item[Simples] ...retira \textbf{uma} tarefa de m* e coloca em uma outra máquina.
+	\item[Melhorada] ...retira \textbf{cada} tarefa de m* e coloca em uma outra máquina.
+\end{description}
+
+Mais de uma máquina m* ... ?
+
+\end{frame}
+
+
 \begin{frame}
 \frametitle{Modelagem GRASP}
 \framesubtitle{Primeira Abordagem}
+
+
 
 \end{frame}
 
@@ -224,6 +243,12 @@ end;
 \begin{frame}
 \frametitle{Modelagem GRASP}
 \framesubtitle{Segunda Abordagem}
+
+\begin{enumerate}
+	\item Ordenação Topológica das tarefas.
+	\item Cálculo de limite inferior.
+	\item Aproxima a carga de cada máquina do limite calculado.
+\end{enumerate}
 
 \end{frame}
 
