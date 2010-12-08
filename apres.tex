@@ -17,7 +17,7 @@
 \date[8/12/2010]{8 de dezembro de 2010}
 
 
-\lstset{numbers=left,tabsize=1,basicstyle=\tiny}
+\lstset{numbers=left,basicstyle=\tiny}
 
 \begin{document}
 
@@ -25,24 +25,23 @@
 
 
 \begin{frame}
-\frametitle{Definição do Problema}
-
-	Uma linha de produção consiste em uma série de estações de trabalho.
-	Dado um conjunto de tarefas com restrições de
-	precedência, temos que atribuir as tarefas às estações, tal que a precedência
-	é respeitada. Cada tarefa possui um tempo
-	de execução. O tempo total das tarefas de uma estação define a sua
-	\emph{carga}, e a carga máxima entre todas as
-	estações define o \emph{tempo de ciclo}.
-
+\frametitle{O Problema}
 	\begin{center}
-	%\includegraphics[]{imagemlegal.aqui}
-	\end{center}
-
+	\includegraphics[scale=0.4]{img/g1.png}
+	\end{center} 
+\footnotetext[]{http://people.brunel.ac.uk/~mastjjb/jeb/or/faclay.html}
 \end{frame}
 
 \begin{frame}
-\frametitle{Definição do Problema}
+\frametitle{O Problema}
+	\begin{center}
+	\includegraphics[scale=0.4]{img/g2.png}
+	\end{center}
+\footnotetext[]{http://people.brunel.ac.uk/~mastjjb/jeb/or/faclay.html}
+\end{frame}
+
+\begin{frame}
+\frametitle{O Problema}
 \framesubtitle{Formalmente}
 	\begin{description}
 	 \item [Instância] Um grafo G = (T,P) direcionado acíclico sobre um conjunto de
@@ -62,7 +61,7 @@
 \begin{frame}
 \frametitle{Formulação Inteira}
 
-	Seja $T$ o conjunto de tarefas e $M$ o conjunto de máquinas.$x_{ij}$ é a variável que indica se a tarefa $i$ foi atribuída à máquina $j$.
+	Seja $T$ o conjunto de tarefas e $M$ o conjunto de máquinas. $x_{ij}$ é a variável que indica se a tarefa $i$ foi atribuída à máquina $j$.
 
 	\begin{center}
 	\begin{tabular}{ r l l }
@@ -77,7 +76,6 @@
 \end{frame}
 
 
-\begin{frame}[fragile]
 \frametitle{Implementação GLPK}
 
 	\begin{lstlisting}
@@ -106,8 +104,9 @@ subject to respectPrecedences {u in 1..N, v in 1..N}:
 \end{frame}
 
 
+\clearpage
 
-\begin{frame}[fragile]
+
 \frametitle{Implementação GLPK}
 	\begin{lstlisting}
 data;
@@ -135,7 +134,6 @@ param prec :
 
 end;
 	\end{lstlisting}
-\end{frame}
 
 
 
@@ -146,7 +144,7 @@ end;
 \footnotesize
  \begin{tabular}{|c|c|c|c|c|}
   \hline
-  \textbf{Instância} & \textbf{m} & \textbf{Tempo de execução} & \textbf{Solução Ótima} & \textbf{Solução Obtida} \\
+  \textbf{Instância} & \textbf{m} & \textbf{Tempo de execução (s)} & \textbf{Solução Ótima} & \textbf{Solução Obtida} \\
   \hline
   Arcus2 & 27 & 1800 & 5689  & 52039 \\
   \hline
@@ -178,7 +176,7 @@ end;
 
 
 \begin{frame}
-\frametitle{Modelagem GRASP}
+\frametitle{Modelagem GRASP - Primeira Abordagem}
 \framesubtitle{Cálculo da Vizinhança}
 
 Sendo m* a máquina com maior carga...
@@ -194,8 +192,7 @@ Mais de uma máquina m* ... ?
 
 
 \begin{frame}
-\frametitle{Modelagem GRASP}
-\framesubtitle{Primeira Abordagem}
+\frametitle{Modelagem GRASP - Primeira Abordagem}
 
 
 
@@ -204,35 +201,35 @@ Mais de uma máquina m* ... ?
 
 
 \begin{frame}
-\frametitle{Modelagem GRASP}
-\framesubtitle{Primeira Abordagem - Resultados}
+\frametitle{Modelagem GRASP - Primeira Abordagem}
+\framesubtitle{Resultados}
 	\begin{table}[htbp]
-	 \footnotesize
-	 \begin{tabular}{|c|c|c|c|c|}
+	 \tiny
+	 \begin{tabular}{|c|c|c|c|c|c|}
 	  \hline
-	  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
+	  \textbf{Instância} & \textbf{m} & \textbf{Tempo de execução (s)}& \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
 	  \hline
-	  Arcus2 & 27 & 5689 & 8023 & 70.90 \\
+	  Arcus2 & 27 &  & 5689 & 8023 & 70.90 \\
 	  \hline
-	  Arcus2 & 9 & 16711 & 18171 & 91.96 \\
+	  Arcus2 & 9 &  & 16711 & 18171 & 91.96 \\
 	  \hline
-	  Bathol2 & 51 & 84 & 87 & 96.55 \\
+	  Bathol2 & 51 &  &  84 & 87 & 96.55 \\
 	  \hline
-	  Bathol2 & 27 & 157 & 168 & 93.45 \\
+	  Bathol2 & 27 &  &  157 & 168 & 93.45 \\
 	  \hline
-	  Warnecke & 10 & 155 & 163 & 95.09 \\
+	  Warnecke & 10 &  & 155 & 163 & 95.09 \\
 	  \hline
-	  Warnecke & 20 & 79 & 111 & 71.17 \\
+	  Warnecke & 20 &  &  79 & 111 & 71.17 \\
 	  \hline
-	  Scholl & 50 & 1394 & 8082 & 17.24 \\
+	  Scholl & 50 &  & 1394 & 8082 & 17.24 \\
 	  \hline
-	  Scholl & 38 & 1834 & - & - \\
+	  Scholl & 38 &  & 1834 & - & - \\
 	  \hline
-	  Scholl & 25 & 2787 & - & - \\
+	  Scholl & 25 &  & 2787 & - & - \\
 	  \hline
-	  Wee-Mag & 20 & 77 & 80 & 96.25 \\
+	  Wee-Mag & 20 &  & 77 & 80 & 96.25 \\
 	  \hline
-	  Wee-Mag & 30 & 56 & 58 & 96.55 \\
+	  Wee-Mag & 30 &  & 56 & 58 & 96.55 \\
 	  \hline
 	 \end{tabular}
 	\end{table}
@@ -241,8 +238,7 @@ Mais de uma máquina m* ... ?
 
 
 \begin{frame}
-\frametitle{Modelagem GRASP}
-\framesubtitle{Segunda Abordagem}
+\frametitle{Modelagem GRASP - Segunda Abordagem}
 
 \begin{enumerate}
 	\item Ordenação Topológica das tarefas.
@@ -255,35 +251,35 @@ Mais de uma máquina m* ... ?
 
 
 \begin{frame}
-\frametitle{Modelagem GRASP}
-\framesubtitle{Segunda Abordagem - Resultados}
+\frametitle{Modelagem GRASP - Segunda Abordagem}
+\framesubtitle{Resultados}
 	\begin{table}[htbp]
-	 \footnotesize
-	 \begin{tabular}{|c|c|c|c|c|}
+	 \tiny
+	 \begin{tabular}{|c|c|c|c|c|c|}
 	  \hline
-	  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
+	  \textbf{Instância} & \textbf{m} & \textbf{Tempo de execução (s)} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
 	  \hline
-	  Arcus2 & 27 & 5689 & 5835 & 97.49 \\
+	  Arcus2 & 27 & 37 & 5689 & 5835 & 97.49 \\
 	  \hline
-	  Arcus2 & 9 & 16711 & 16724 & 99.92 \\
+	  Arcus2 & 9 & 44 & 16711 & 16724 & 99.92 \\
 	  \hline
-	  Bathol2 & 51 & 84 & 89 & 94.38 \\
+	  Bathol2 & 51 & 71 & 84 & 89 & 94.38 \\
 	  \hline
-	  Bathol2 & 27 & 157 & 160 & 98.12 \\
+	  Bathol2 & 27 & 62 & 157 & 160 & 98.12 \\
 	  \hline
-	  Warnecke & 10 & 155 & 159 & 97.48 \\
+	  Warnecke & 10 & 10 & 155 & 159 & 97.48 \\
 	  \hline
-	  Warnecke & 20 & 79 & 81 & 97.53 \\
+	  Warnecke & 20 & 10 & 79 & 81 & 97.53 \\
 	  \hline
-	  Scholl & 50 & 1394 & 1449 & 96.20 \\
+	  Scholl & 50 & 173 & 1394 & 1449 & 96.20 \\
 	  \hline
-	  Scholl & 38 & 1834 & 1883 & 97.39 \\
+	  Scholl & 38 & 142 & 1834 & 1883 & 97.39 \\
 	  \hline
-	  Scholl & 25 & 2787 & 2825 & 98.30 \\
+	  Scholl & 25 & 122 & 2787 & 2825 & 98.30 \\
 	  \hline
-	  Wee-Mag & 20 & 77 & 78 & 98.71 \\
+	  Wee-Mag & 20 & 21 & 77 & 78 & 98.71 \\
 	  \hline
-	  Wee-Mag & 30 & 56 & 56 & 1 \\
+	  Wee-Mag & 30 & 27 & 56 & 56 & 1 \\
 	  \hline
 	 \end{tabular}
 	\end{table}
@@ -301,8 +297,13 @@ Mais de uma máquina m* ... ?
 \begin{frame}
 \frametitle{}
 	\begin{center}
-	Perguntas?
+	Obrigado.
 	\end{center}
+
+	\begin{center}
+	\{cmdalbem,ffbeltrao,lfzawacki\}@inf.ufrgs.br
+	\end{center}
+
 \end{frame}
 
 
