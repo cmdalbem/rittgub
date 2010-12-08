@@ -1,0 +1,285 @@
+\documentclass{beamer}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage{verbatim}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{listings}
+
+\usetheme{Antibes}
+
+
+\title{GRASP Aplicado ao Problema de Balanceamento de Linhas de Produção}
+\author{Cristiano Medeiros Dalbem \and Fábio da Fontoura Beltrão \and Lucas Fialho Zawacki}
+\subtitle{Otimização Combinatória (INF05010) - Prof. Marcus Rit}
+\institute[UFRGS]{Universidade Federal do Rio Grande do Sul}
+\date[8/12/2010]{8 de dezembro de 2010}
+
+
+\lstset{numbers=left,tabsize=1,basicstyle=\tiny}
+
+\begin{document}
+
+	\frame{\titlepage}
+
+
+\begin{frame}
+\frametitle{Definição do Problema}
+
+	Uma linha de produção consiste em uma série de estações de trabalho.
+	Dado um conjunto de tarefas com restrições de
+	precedência, temos que atribuir as tarefas às estações, tal que a precedência
+	é respeitada. Cada tarefa possui um tempo
+	de execução. O tempo total das tarefas de uma estação define a sua
+	\emph{carga}, e a carga máxima entre todas as
+	estações define o \emph{tempo de ciclo}.
+
+	\begin{center}
+	\includegraphics[]{imagemlegal.aqui}
+	\end{center}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Definição do Problema}
+\framesubtitle{Formalmente}
+	\begin{description}
+	 \item [Instância] Um grafo G = (T,P) direcionado acíclico sobre um conjunto de
+	 tarefas T, o tempo de execução $t_i$ de
+	cada tarefa $i \in T$, e um número $m$ de estações de trabalho.
+
+	 \item [Solução] Uma atribuição $s : T \rightarrow [m]$ das tarefas às
+	 estações que satisfaz as restrições de
+	precedência, i.e. para cada $tu \in P$, $s(t) \leq s(u)$.
+
+	 \item [Objetivo] Minimizar o tempo de ciclo  $max_{i\in[m]}\sum_{j\in T\mid s(t)=i}t_j$.
+	\end{description}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Formulação Inteira}
+
+	Seja $T$ o conjunto de tarefas e $M$ o conjunto de máquinas.$x_{ij}$ é a variável que indica se a tarefa $i$ foi atribuída à máquina $j$.
+
+	\begin{center}
+	\begin{tabular}{ r l l }
+	  \textbf{min} & T &\\
+	  \textbf{s.a} & $ \sum_{i=1}^{n} t_i \cdot x_i_j \leq T $ & $\forall j \in M$\\
+	& $ \sum_{j=1}^{m} x_i_j = 1 & $\forall i \in T$ \\
+	& $ \sum_{j=1}^{m} j \cdot x_u_j \leq  \sum_{j=1}^{m} j \cdot x_v_j $ & \forall (u,v) \mid PRECEDE[u,v] = 1 \\
+	& $ x_i_j \in \mathbb{B} $ & $\forall i \in T$, $\forall j \in M$ \\
+	\end{tabular}
+	\end{center}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+\frametitle{Implementação GLPK}
+
+	\begin{lstlisting}
+param M;
+param N;
+param costs{1..N} >= 0;
+param prec{1..N, 1..N} >=0;
+
+var cicletime, integer;
+var delegate{1..N,1..M} >= 0, binary;
+
+
+minimize minCicleTime:
+	cicletime;
+
+subject to cicleTimeLimit {j in 1..M}:
+	(sum {i in 1..N} costs[i]*delegate[i,j]) <= cicletime;
+
+subject to delegateAll {i in 1..N}:
+	(sum {j in 1..M} delegate[i,j]) = 1;
+
+subject to respectPrecedences {u in 1..N, v in 1..N}:
+	if prec[u,v] == 1 then
+		(sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);
+	\end{lstlisting}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Implementação GLPK}
+	\begin{lstlisting}
+data;
+
+param M := 5;
+param N := 7;
+
+param costs :=
+	1 1
+	2 5
+	3 4
+	4 3
+	5 5
+	6 6
+	7 5;
+param prec :
+	1 2 3 4 5 6 7 :=
+	1 0 0 0 0 0 0 0 
+	2 1 0 0 0 0 0 0 
+	3 0 1 0 0 0 0 0 
+	4 1 0 0 0 0 0 0 
+	5 0 1 0 0 0 0 0 
+	6 0 0 0 0 1 0 0 
+	7 0 0 0 1 0 0 0 ;
+
+end;
+	\end{lstlisting}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Resultados}
+
+\begin{table}[htbp]
+\footnotesize
+ \begin{tabular}{|c|c|c|c|c|}
+  \hline
+  \textbf{Instância} & \textbf{m} & \textbf{Tempo de execução} & \textbf{Solução Ótima} & \textbf{Solução Obtida} \\
+  \hline
+  Arcus2 & 27 & 1800 & 5689  & 52039 \\
+  \hline
+  Arcus2 & 9 & 1800 & 16711 & 32649 \\
+  \hline
+  Bathol2 & 51 & 1800 & 84 & 1527 \\
+  \hline
+  Bathol2 & 27 & 1800 & 157 & 1211 \\
+  \hline
+  Warnecke & 10 & 847 & 155 & 155 \\
+  \hline
+  Warnecke & 20 & 1800 & 79 & 349 \\
+  \hline
+  Scholl & 50 & 1800 & 1394 & 57552 \\
+  \hline
+  Scholl & 38 & 1800 & 1834 & 0 \\
+  \hline
+  Scholl & 25 & 1800 & 2787 & 32326 \\
+  \hline
+  Wee-Mag & 20 & 1800 & 77 & 86 \\
+  \hline
+  Wee-Mag & 30 & 1800 & 56 & 87 \\
+  \hline
+ \end{tabular}
+\end{table}
+
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Modelagem GRASP}
+\framesubtitle{Primeira Abordagem}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Modelagem GRASP}
+\framesubtitle{Primeira Abordagem - Resultados}
+	\begin{table}[htbp]
+	 \footnotesize
+	 \begin{tabular}{|c|c|c|c|c|}
+	  \hline
+	  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
+	  \hline
+	  Arcus2 & 27 & 5689 & 8023 & 70.90 \\
+	  \hline
+	  Arcus2 & 9 & 16711 & 18171 & 91.96 \\
+	  \hline
+	  Bathol2 & 51 & 84 & 87 & 96.55 \\
+	  \hline
+	  Bathol2 & 27 & 157 & 168 & 93.45 \\
+	  \hline
+	  Warnecke & 10 & 155 & 163 & 95.09 \\
+	  \hline
+	  Warnecke & 20 & 79 & 111 & 71.17 \\
+	  \hline
+	  Scholl & 50 & 1394 & 8082 & 17.24 \\
+	  \hline
+	  Scholl & 38 & 1834 & - & - \\
+	  \hline
+	  Scholl & 25 & 2787 & - & - \\
+	  \hline
+	  Wee-Mag & 20 & 77 & 80 & 96.25 \\
+	  \hline
+	  Wee-Mag & 30 & 56 & 58 & 96.55 \\
+	  \hline
+	 \end{tabular}
+	\end{table}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Modelagem GRASP}
+\framesubtitle{Segunda Abordagem}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Modelagem GRASP}
+\framesubtitle{Segunda Abordagem - Resultados}
+	\begin{table}[htbp]
+	 \footnotesize
+	 \begin{tabular}{|c|c|c|c|c|}
+	  \hline
+	  \textbf{Instância} & \textbf{m} & \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
+	  \hline
+	  Arcus2 & 27 & 5689 & 5835 & 97.49 \\
+	  \hline
+	  Arcus2 & 9 & 16711 & 16724 & 99.92 \\
+	  \hline
+	  Bathol2 & 51 & 84 & 89 & 94.38 \\
+	  \hline
+	  Bathol2 & 27 & 157 & 160 & 98.12 \\
+	  \hline
+	  Warnecke & 10 & 155 & 159 & 97.48 \\
+	  \hline
+	  Warnecke & 20 & 79 & 81 & 97.53 \\
+	  \hline
+	  Scholl & 50 & 1394 & 1449 & 96.20 \\
+	  \hline
+	  Scholl & 38 & 1834 & 1883 & 97.39 \\
+	  \hline
+	  Scholl & 25 & 2787 & 2825 & 98.30 \\
+	  \hline
+	  Wee-Mag & 20 & 77 & 78 & 98.71 \\
+	  \hline
+	  Wee-Mag & 30 & 56 & 56 & 1 \\
+	  \hline
+	 \end{tabular}
+	\end{table}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Conclusões}
+
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{}
+	\begin{center}
+	Perguntas?
+	\end{center}
+\end{frame}
+
+
+
+\end{document}
