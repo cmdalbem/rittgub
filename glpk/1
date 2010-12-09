@@ -20,7 +20,7 @@ if prec[u,v] == 1 then
 (sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);
 
 data;
-param M := 9;
+param M := 27;
 param N := 111;
 
 param costs :=

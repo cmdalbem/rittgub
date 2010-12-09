@@ -88,7 +88,7 @@ int main(int argc, char**argv) {
 	m = atoi(argv[1]);
 	alpha = atoi(argv[2]);
     isSoia = atoi(argv[3]);
-    isToCreateGlpk = atoi(argv[4]);
+    isToCreateGlpk = 0;//atoi(argv[4]);
 
     seed = argc == 5 ? atoi(argv[4]) : time(NULL);
 
@@ -108,7 +108,7 @@ int main(int argc, char**argv) {
 			else
 				randomGreedy();
 
-			localSearch();
+			//localSearch();
 			updateSolution();
 		}
 
@@ -355,6 +355,7 @@ void localSearch() {
 }
 
 void updateSolution() {
+	currentSolution = longestCicle();
 	if(currentSolution < cicle)
 		cicle = currentSolution;
 }

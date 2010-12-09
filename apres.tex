@@ -29,7 +29,7 @@
 	\begin{center}
 	\includegraphics[scale=0.4]{img/g1.png}
 	\end{center} 
-\footnotetext[]{http://people.brunel.ac.uk/~mastjjb/jeb/or/faclay.html}
+\footnotetext{http://people.brunel.ac.uk/~mastjjb/jeb/or/faclay.html}
 \end{frame}
 
 \begin{frame}
@@ -37,7 +37,7 @@
 	\begin{center}
 	\includegraphics[scale=0.4]{img/g2.png}
 	\end{center}
-\footnotetext[]{http://people.brunel.ac.uk/~mastjjb/jeb/or/faclay.html}
+\footnotetext{http://people.brunel.ac.uk/~mastjjb/jeb/or/faclay.html}
 \end{frame}
 
 \begin{frame}
@@ -75,7 +75,7 @@
 
 \end{frame}
 
-
+\begin{frame}[fragile]
 \frametitle{Implementação GLPK}
 
 	\begin{lstlisting}
@@ -89,23 +89,22 @@ var delegate{1..N,1..M} >= 0, binary;
 
 
 minimize minCicleTime:
-	cicletime;
+    cicletime;
 
 subject to cicleTimeLimit {j in 1..M}:
-	(sum {i in 1..N} costs[i]*delegate[i,j]) <= cicletime;
+    (sum {i in 1..N} costs[i]*delegate[i,j]) <= cicletime;
 
 subject to delegateAll {i in 1..N}:
-	(sum {j in 1..M} delegate[i,j]) = 1;
+    (sum {j in 1..M} delegate[i,j]) = 1;
 
 subject to respectPrecedences {u in 1..N, v in 1..N}:
-	if prec[u,v] == 1 then
-		(sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);
+    if prec[u,v] == 1 then
+        (sum {j in 1..M} j*delegate[u,j]) <= (sum {j in 1..M} j*delegate[v,j]);
 	\end{lstlisting}
 \end{frame}
 
 
-\clearpage
-
+\begin{frame}[fragile]
 
 \frametitle{Implementação GLPK}
 	\begin{lstlisting}
@@ -115,26 +114,26 @@ param M := 5;
 param N := 7;
 
 param costs :=
-	1 1
-	2 5
-	3 4
-	4 3
-	5 5
-	6 6
-	7 5;
+    1 1
+    2 5
+    3 4
+    4 3
+    5 5
+    6 6
+    7 5;
 param prec :
-	1 2 3 4 5 6 7 :=
-	1 0 0 0 0 0 0 0 
-	2 1 0 0 0 0 0 0 
-	3 0 1 0 0 0 0 0 
-	4 1 0 0 0 0 0 0 
-	5 0 1 0 0 0 0 0 
-	6 0 0 0 0 1 0 0 
-	7 0 0 0 1 0 0 0 ;
+    1 2 3 4 5 6 7 :=
+    1 0 0 0 0 0 0 0 
+    2 1 0 0 0 0 0 0 
+    3 0 1 0 0 0 0 0 
+    4 1 0 0 0 0 0 0 
+    5 0 1 0 0 0 0 0 
+    6 0 0 0 0 1 0 0 
+    7 0 0 0 1 0 0 0 ;
 
 end;
 	\end{lstlisting}
-
+\end{frame}
 
 
 \begin{frame}
@@ -146,27 +145,27 @@ end;
   \hline
   \textbf{Instância} & \textbf{m} & \textbf{Tempo de execução (s)} & \textbf{Solução Ótima} & \textbf{Solução Obtida} \\
   \hline
-  Arcus2 & 27 & 1800 & 5689  & 52039 \\
+  Arcus2 & 27 & 3600 & 5689  & 50010 \\
   \hline
-  Arcus2 & 9 & 1800 & 16711 & 32649 \\
+  Arcus2 & 9 & 3600 & 16711 & 32649 \\
   \hline
-  Bathol2 & 51 & 1800 & 84 & 1527 \\
+  Bathol2 & 51 & 3600 & 84 & 1527 \\
   \hline
-  Bathol2 & 27 & 1800 & 157 & 1211 \\
+  Bathol2 & 27 & 3600 & 157 & 1211 \\
   \hline
   Warnecke & 10 & 847 & 155 & 155 \\
   \hline
-  Warnecke & 20 & 1800 & 79 & 349 \\
+  Warnecke & 20 & 3600 & 79 & 349 \\
   \hline
-  Scholl & 50 & 1800 & 1394 & 57552 \\
+  Scholl & 50 & 3600 & 1394 & 57552 \\
   \hline
-  Scholl & 38 & 1800 & 1834 & 0 \\
+  Scholl & 38 & 3600 & 1834 & 42922 \\
   \hline
-  Scholl & 25 & 1800 & 2787 & 32326 \\
+  Scholl & 25 & 3600 & 2787 & 32326 \\
   \hline
-  Wee-Mag & 20 & 1800 & 77 & 86 \\
+  Wee-Mag & 20 & 3600 & 77 & 84 \\
   \hline
-  Wee-Mag & 30 & 1800 & 56 & 87 \\
+  Wee-Mag & 30 & 3600 & 56 & 65 \\
   \hline
  \end{tabular}
 \end{table}
@@ -174,9 +173,24 @@ end;
 \end{frame}
 
 
+\begin{frame}[fragile]
+\frametitle{GRASP}
+
+\begin{verbatim}
+for 1 -> MAX_ITERATIONS
+    s' = greedy_randomized_solution()
+    s' = local_search(s')
+    s  = update_solution(s')
+end for
+\end{verbatim}
+
+
+\end{frame}
+
+
 
 \begin{frame}
-\frametitle{Modelagem GRASP - Primeira Abordagem}
+\frametitle{Modelagem GRASP}
 \framesubtitle{Cálculo da Vizinhança}
 
 Sendo m* a máquina com maior carga...
@@ -194,7 +208,13 @@ Mais de uma máquina m* ... ?
 \begin{frame}
 \frametitle{Modelagem GRASP - Primeira Abordagem}
 
-
+\begin{enumerate}
+	
+	\item Pega tarefas uma a uma da lista de tarefas
+	\item Adiciona a tarefa na máquina que minimiza o ciclo máximo e respeita as restrições
+	\item Repete para cada tarefa
+	
+\end{enumerate}
 
 \end{frame}
 
@@ -209,29 +229,30 @@ Mais de uma máquina m* ... ?
 	  \hline
 	  \textbf{Instância} & \textbf{m} & \textbf{Tempo de execução (s)}& \textbf{Solução Ótima} & \textbf{Solução Obtida} & \% optimalidade \\
 	  \hline
-	  Arcus2 & 27 &  & 5689 & 8023 & 70.90 \\
+	  Arcus2 & 27 & 562 & 5689 & 8023 & 70.90 \\
 	  \hline
-	  Arcus2 & 9 &  & 16711 & 18171 & 91.96 \\
+	  Arcus2 & 9 & 194 & 16711 & 18171 & 91.96 \\
 	  \hline
-	  Bathol2 & 51 &  &  84 & 87 & 96.55 \\
+	  Bathol2 & 51 & 1364 &  84 & 87 & 96.55 \\
 	  \hline
-	  Bathol2 & 27 &  &  157 & 168 & 93.45 \\
+	  Bathol2 & 27 & 949 &  157 & 168 & 93.45 \\
 	  \hline
-	  Warnecke & 10 &  & 155 & 163 & 95.09 \\
+	  Warnecke & 10 & 56 & 155 & 163 & 95.09 \\
 	  \hline
-	  Warnecke & 20 &  &  79 & 111 & 71.17 \\
+	  Warnecke & 20 & 110 &  79 & 111 & 71.17 \\
 	  \hline
-	  Scholl & 50 &  & 1394 & 8082 & 17.24 \\
+	  Scholl & 50 & 6720 & 1394 & 8082 & 17.24 \\
 	  \hline
-	  Scholl & 38 &  & 1834 & - & - \\
+	  Scholl & 38 & 5769 & 1834 & 7846 & 23.37 \\
 	  \hline
-	  Scholl & 25 &  & 2787 & - & - \\
+	  Scholl & 25 & 3906 & 2787 & 9221 & 30.22 \\
 	  \hline
-	  Wee-Mag & 20 &  & 77 & 80 & 96.25 \\
+	  Wee-Mag & 20 & 169 & 77 & 80 & 96.25 \\
 	  \hline
-	  Wee-Mag & 30 &  & 56 & 58 & 96.55 \\
+	  Wee-Mag & 30 & 263 & 56 & 58 & 96.55 \\
 	  \hline
 	 \end{tabular}
+	 \caption{Resultados da primeira abordagem.\footnote{Limite de 100000 iterações.}}
 	\end{table}
 \end{frame}
 
@@ -282,6 +303,7 @@ Mais de uma máquina m* ... ?
 	  Wee-Mag & 30 & 27 & 56 & 56 & 1 \\
 	  \hline
 	 \end{tabular}
+	 \caption{Resultados da segunda abordagem.\footnote{Limite de 100000 iterações.}}
 	\end{table}
 \end{frame}
 
@@ -289,6 +311,19 @@ Mais de uma máquina m* ... ?
 
 \begin{frame}
 \frametitle{Conclusões}
+
+\begin{itemize}
+	\item GRASP - fácil entendimento e implementação.
+	\item Resultados satisfatórios
+	\begin{itemize}
+		\item Média de 97.77\% da optimalidade.
+	\end{itemize}
+	\item Dificuldades? Dependentes do problema
+	\begin{itemize}
+		\item Solução inicial boa;
+		\item Vizinhança abrangente e precisa.
+	\end{itemize}
+\end{itemize}
 
 \end{frame}
 
